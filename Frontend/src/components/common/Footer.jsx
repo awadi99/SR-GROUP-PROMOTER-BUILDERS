@@ -23,7 +23,7 @@ export default function Footer() {
           <div className="lg:col-span-4 space-y-8">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center overflow-hidden border border-white/10">
-                <img src="/images/logo.png" className="h-full w-full object-cover" alt="Logo" />
+                <img src="/image/logo.png" className="h-full w-full object-cover" alt="Logo" />
               </div>
               <h2 className="text-2xl font-medium tracking-tighter">
                 SR <span className="text-[#A68966]">GROUP</span>

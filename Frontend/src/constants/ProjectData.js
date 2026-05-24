@@ -1,7 +1,7 @@
 import building1 from "../assets/buildingImage/building1.jpeg";
 import building2 from "../assets/buildingImage/building2.jpeg";
 import building3 from "../assets/buildingImage/building3.jpg";
-import HeroBg from "/images/HeroBg.jpeg";
+import HeroBg from "/image/HeroBg.png";
 
 const projects = [
   {

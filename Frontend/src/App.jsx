@@ -1,23 +1,48 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import SmoothScroll from './components/scroll/SmoothScroll';
 import { ToastContainer, Flip } from 'react-toastify';
+import LoadingLogoHero from './layouts/LoadingLogoHero'; 
+import LoadingSpinner from './components/loading/LoadingSpinner';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Lazy load components
+// Lazy loading components
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const LuxuryLayout = lazy(() => import('./layouts/LuxuryLayout'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 
-const LoadingSpinner = () => (
-  <div className="h-screen w-screen flex items-center justify-center bg-[#030303]">
-    <div className="w-8 h-8 border border-luxury-gold/30 border-t-luxury-gold rounded-full animate-spin"></div>
-  </div>
-);
+class NetworkErrorBoundary extends React.Component {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="fixed inset-0 bg-[#030303] flex flex-col items-center justify-center text-center z-[9999]">
+          <p className="text-[#B08B57] uppercase tracking-widest text-xs mb-4">Connection Stuttered</p>
+          <button onClick={() => window.location.reload()} className="px-4 py-2 text-[10px] uppercase border border-[#B08B57]/30 text-white rounded">
+            Retry Connection
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export default function App() {
+  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem("intro_viewed"));
+
   return (
-    <div className="antialiased selection:bg-luxury-gold selection:text-black">
+    <div className="antialiased selection:bg-[#B08B57] selection:text-black">
+      
+      {/* 1. Loader Layer */}
+      <LoadingLogoHero 
+        isActive={showIntro} 
+        onComplete={() => setShowIntro(false)} 
+      />
+
+      {/* 2. Global SmoothScroll - Wrapped here so all routes/Navbar can access it */}
       <SmoothScroll>
         <ToastContainer 
           position="top-center" 
@@ -26,21 +51,18 @@ export default function App() {
           transition={Flip} 
         />
 
-        <div className="min-h-screen bg-[#030303] text-white">
-          <Suspense fallback={<LoadingSpinner />}>
-            <Routes>
-              {/* Landing Page */}
-              <Route path='/' element={<LandingPage />} />
-
-              {/* Luxury Layout for sub-pages */}
-              <Route path="/luxury" element={<LuxuryLayout />}>
-                <Route path="project/:id" element={<ProjectDetail />} />
-              </Route>
-
-              {/* Single Catch-all for invalid URLs */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
+        <div className={`transition-opacity duration-1000 ${showIntro ? "opacity-0" : "opacity-100"}`}>
+          <NetworkErrorBoundary>
+            <Suspense fallback={<LoadingSpinner />}>
+              <Routes>
+                <Route path='/' element={<LandingPage />} />
+                <Route path="/luxury" element={<LuxuryLayout />}>
+                  <Route path="project/:id" element={<ProjectDetail />} />
+                </Route>
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Suspense>
+          </NetworkErrorBoundary>
         </div>
       </SmoothScroll>
     </div>

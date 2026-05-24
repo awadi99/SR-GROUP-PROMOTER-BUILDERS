@@ -5,11 +5,17 @@ import { ToastContainer, Flip } from 'react-toastify';
 import LoadingLogoHero from './layouts/LoadingLogoHero'; 
 import LoadingSpinner from './components/loading/LoadingSpinner';
 import 'react-toastify/dist/ReactToastify.css';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import ForgotPassword from './pages/ForgetPassword';
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 // Lazy loading components
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const LuxuryLayout = lazy(() => import('./layouts/LuxuryLayout'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
+
 
 class NetworkErrorBoundary extends React.Component {
   state = { hasError: false };
@@ -56,6 +62,11 @@ export default function App() {
             <Suspense fallback={<LoadingSpinner />}>
               <Routes>
                 <Route path='/' element={<LandingPage />} />
+                <Route path='/login' element={<Login />} />
+                <Route path='/register' element={<Register />} />
+                <Route path='/forgot-password' element={<ForgotPassword />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/luxury" element={<LuxuryLayout />}>
                   <Route path="project/:id" element={<ProjectDetail />} />
                 </Route>

@@ -4,6 +4,7 @@ import Hero from '../components/landing/Hero';
 import Stats from '../components/landing/Stats';
 import ProjectGrid from '../components/landing/ProjectGrid';
 import Amenities from '../components/landing/Amenities';
+import AboutUs from '../components/landing/AboutUS';
 import ContactUs from '../components/landing/ContactUs';
 import OurTeams from '../components/landing/OurTeams';
 import Footer from '../components/common/Footer';
@@ -20,7 +21,9 @@ export default function LandingPage() {
         <Stats />
         <ProjectGrid />
         <Amenities />
+        <AboutUs/>
         <OurTeams />
+
         <ContactUs />
         <Footer />
       </div>

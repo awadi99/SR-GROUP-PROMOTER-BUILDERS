@@ -2,16 +2,19 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import HeroBackground from './HeroBackground';
 import { HeroSEO } from './HeroSchema';
+import { Link } from 'react-router-dom';
+
+
 
 export default function Hero() {
   return (
-<section 
-      id="hero" 
+    <section
+      id="hero"
       className="relative h-screen w-full bg-[#030303] overflow-hidden flex items-center justify-center"
       aria-label="Welcome to SR Group"
     >
       <HeroSEO />
-      
+
       {/* Background is now fully static and completely decoupled from scroll loops */}
       <HeroBackground />
 
@@ -19,19 +22,19 @@ export default function Hero() {
       <div className="relative z-10 text-center w-full px-6 pointer-events-none">
         {/* Removed style={{ y: y2 }} scroll tracking dependencies completely */}
         <div className="transform-gpu">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
             className="text-[clamp(2.5rem,7vw,6rem)] font-serif text-white font-medium leading-[1.1] tracking-tight uppercase"
           >
-            SR GROUP <br/>
-            <span className="text-luxury-gold text-[clamp(1.5rem,4vw,3.5rem)] font-light tracking-[0.2em] block mt-4 text-[#b97311] ">
+            SR GROUP <br />
+            <span className="text-luxury-gold text-[clamp(1.5rem,4vw,3.5rem)] font-light tracking-[0.2em] block mt-4  ">
               PROMOTER AND BUILDER
             </span>
           </motion.h1>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ width: 0 }}
             animate={{ width: "12rem" }}
             transition={{ delay: 1, duration: 1.5 }}
@@ -45,14 +48,25 @@ export default function Hero() {
         <p className="text-[9px] text-white/60 uppercase tracking-[0.3em] hidden md:block">
           Baramati — Est. 2026
         </p>
-        
-        <button 
-          className="group relative text-white uppercase tracking-[0.2em] text-[9px] py-4 border-b border-white/30 hover:border-luxury-gold transition-all duration-500 pointer-events-auto"
-          aria-label="Click to view our luxury real estate projects"
-        >
-          Explore Projects
-          <div className="absolute top-0 right-0 w-1 h-1 bg-luxury-gold rounded-full group-hover:scale-150 transition-transform duration-500" />
-        </button>
+
+        <div className="flex items-center gap-8">
+          {/* Register Button (Secondary/Ghost) */}
+          <Link
+            to="/register"
+            className="text-white/60 uppercase tracking-[0.2em] text-[9px] py-4 border-b border-transparent hover:text-[#B08B57] hover:border-[#B08B57] transition-all duration-500 pointer-events-auto"
+          >
+            Register
+          </Link>
+
+          {/* Explore Projects Button (Primary) */}
+          <button
+            className="group relative text-white uppercase tracking-[0.2em] text-[9px] py-4 border-b border-white/30 hover:border-[#B08B57] transition-all duration-500 pointer-events-auto"
+            aria-label="Click to view our luxury real estate projects"
+          >
+            Explore Projects
+            <div className="absolute top-0 right-0 w-1 h-1 bg-[#B08B57] rounded-full group-hover:scale-150 transition-transform duration-500" />
+          </button>
+        </div>
       </footer>
     </section>
   );

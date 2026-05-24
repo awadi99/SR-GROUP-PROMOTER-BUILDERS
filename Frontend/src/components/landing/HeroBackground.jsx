@@ -7,7 +7,7 @@ export default function HeroBackground() {
       <div className="absolute inset-0 bg-black/30 z-10 pointer-events-none" />
       <img 
         src="/image/HeroBg.png" 
-        className="w-full h-full object-cover opacity-40 scale-105"
+        className="w-full h-full object-cover scale-105"
         alt="Luxury architectural estate by SR Group"
         fetchPriority="high"
         loading="eager"

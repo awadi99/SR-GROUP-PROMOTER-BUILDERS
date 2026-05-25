@@ -3,110 +3,83 @@ import { motion } from "framer-motion";
 
 export default function ArchitectureSection({ project }) {
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-4 md:gap-6 mb-4 md:mb-6 [contain:layout_style]">
-
-            {/* VISION GALLERY BLOCK */}
-            <div className="bg-[#F8F5F0] rounded-[24px] sm:rounded-[30px] md:rounded-[36px] border border-[#DED8CF] p-5 sm:p-6 md:p-8">
-                <div className="flex justify-between items-center mb-8 sm:mb-10">
-                    <p className="uppercase text-[10px] sm:text-[11px] tracking-[0.18em] text-[#7A746B] font-medium">Architectural Vision</p>
+        <div className="p-5 grid grid-cols-1 xl:grid-cols-[1fr_minmax(350px,400px)] gap-6 lg:gap-8">
+            {/* MAIN VISION BLOCK */}
+            <div className="bg-[#F8F5F0] rounded-[24px] md:rounded-[36px] border border-[#DED8CF] p-5 sm:p-8 lg:p-10">
+                <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
+                    <p className="uppercase text-[10px] tracking-[0.25em] text-[#7A746B] font-semibold">
+                        Architectural Vision
+                    </p>
                     <span className="text-[#B08B57] text-xs sm:text-sm font-medium">Curated Living</span>
                 </div>
 
-                {/* GALLERIES WITH ACCELERATED SCALE */}
-                <div className="grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-4 mb-8 sm:mb-10">
-                    <div className="rounded-[24px] overflow-hidden h-[300px] md:h-auto transform-gpu">
-                        <motion.img
-                            src={project.gallery[0]}
-                            alt="Perspective Main"
-                            className="w-full h-full object-cover"
-                            whileHover={{ scale: 1.015 }}
-                            transition={{ duration: 0.6 }}
-                            loading="lazy"
+                {/* GALLERY - Optimized for mobile/tablet/desktop */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    <div className="rounded-[24px] overflow-hidden h-[300px] sm:h-[420px] w-full">
+                        <motion.img 
+                            src={project.gallery[0]} 
+                            className="w-full h-full object-cover" 
+                            whileHover={{ scale: 1.03 }} 
+                            transition={{ duration: 0.6 }} 
                         />
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-1 gap-4">
-                        <div className="rounded-[24px] overflow-hidden h-[150px] sm:h-[200px] transform-gpu">
-                            <motion.img
-                                src={project.gallery[1]}
-                                alt="Detail Cut One"
-                                className="w-full h-full object-cover"
-                                whileHover={{ scale: 1.015 }}
-                                transition={{ duration: 0.6 }}
-                                loading="lazy"
+                        <div className="rounded-[24px] overflow-hidden h-[150px] sm:h-[202px] w-full">
+                            <motion.img 
+                                src={project.gallery[1]} 
+                                className="w-full h-full object-cover" 
+                                whileHover={{ scale: 1.03 }} 
+                                transition={{ duration: 0.6 }} 
                             />
                         </div>
-                        <div className="rounded-[24px] overflow-hidden h-[150px] sm:h-[200px] transform-gpu">
-                            <motion.img
-                                src={project.gallery[2]}
-                                alt="Detail Cut Two"
-                                className="w-full h-full object-cover"
-                                whileHover={{ scale: 1.015 }}
-                                transition={{ duration: 0.6 }}
-                                loading="lazy"
+                        <div className="rounded-[24px] overflow-hidden h-[150px] sm:h-[202px] w-full">
+                            <motion.img 
+                                src={project.gallery[2]} 
+                                className="w-full h-full object-cover" 
+                                whileHover={{ scale: 1.03 }} 
+                                transition={{ duration: 0.6 }} 
                             />
                         </div>
                     </div>
                 </div>
 
-                <p className="text-[#5E5A54] leading-8 sm:leading-9 text-[14px] sm:text-[16px] font-light">
+                <p className="text-[#5E5A54] text-sm md:text-base font-light leading-relaxed mb-10 max-w-3xl">
                     {project.longDescription}
                 </p>
 
-                {/* AMENITIES / HIGHLIGHTS */}
-                <div className="mt-10 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {project.highlights.map((item, i) => (
-                        <div key={i} className="bg-white rounded-[22px] border border-[#E7E1D8] p-5 sm:p-6 transform-gpu">
-                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#F5F1EA] flex items-center justify-center text-[#B08B57] mb-5 font-mono text-sm">
-                                0{i + 1}
-                            </div>
-                            <h3 className="text-lg sm:text-xl font-medium text-[#1E1E1E] tracking-tight">{item}</h3>
+                        <div key={i} className="group bg-white rounded-2xl border border-[#E7E1D8] p-5 hover:border-[#B08B57]/30 transition-colors">
+                            <h3 className="text-[#1E1E1E] text-sm font-medium tracking-wide">{item}</h3>
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* SPECIFICATIONS SHEET RIGHT SIDEBAR */}
-            <div className="space-y-4 md:space-y-6">
-                <div className="bg-[#F8F5F0] rounded-[24px] sm:rounded-[30px] border border-[#DED8CF] p-5 sm:p-6 md:p-8">
-                    <div className="flex justify-between items-center mb-8 sm:mb-10">
-                        <p className="uppercase text-[10px] sm:text-[11px] tracking-[0.18em] text-[#7A746B] font-medium">Project Specifications</p>
-                        <span className="text-[#B08B57] text-xs sm:text-sm font-medium">Overview</span>
-                    </div>
-
-                    <div className="space-y-5 sm:space-y-6">
-                        {Object.entries(project.specs).map(([key, value], i) => (
-                            <div key={i} className="flex justify-between gap-4 border-b border-[#E7E1D8] pb-4">
-                                <span className="uppercase text-[10px] sm:text-[11px] tracking-[0.15em] text-[#7A746B] font-medium">{key}</span>
-                                <span className="font-medium text-right text-sm sm:text-base text-[#1E1E1E]">{value}</span>
-                            </div>
-                        ))}
-                    </div>
+            {/* SPECIFICATIONS SIDEBAR */}
+            <div className="bg-[#F8F5F0] rounded-[30px] md:rounded-[40px] border border-[#DED8CF] p-6 sm:p-8 lg:p-10 h-fit xl:sticky xl:top-6">
+                <div className="mb-8 border-l-2 border-[#B08B57] pl-6">
+                    <p className="uppercase text-[11px] lg:text-[13px] tracking-[0.2em] lg:tracking-[0.3em] text-[#B08B57] font-bold">
+                        Specifications
+                    </p>
                 </div>
 
-                {/* SIDEBAR MINI SYNOPSIS GALLERY */}
-                <div className="bg-[#F8F5F0] rounded-[24px] sm:rounded-[30px] border border-[#DED8CF] p-4 sm:p-5">
-                    <p className="uppercase text-[10px] sm:text-[11px] tracking-[0.18em] text-[#7A746B] mb-5 font-medium">Selected Perspectives</p>
-                    <div className="grid grid-cols-2 gap-3">
-                        {project.gallery.map((img, i) => (
-                            <div
-                                key={i}
-                                className={`overflow-hidden rounded-[18px] transform-gpu ${i === 0 ? "col-span-2 h-[220px]" : "h-[130px] sm:h-[150px]"
-                                    }`}
-                            >
-                                <motion.img
-                                    src={img}
-                                    alt=""
-                                    className="w-full h-full object-cover"
-                                    whileHover={{ scale: 1.015 }}
-                                    transition={{ duration: 0.6 }}
-                                    loading="lazy"
-                                />
-                            </div>
-                        ))}
-                    </div>
+                <div className="space-y-3">
+                    {Object.entries(project.specs).map(([key, value], i) => (
+                        <div
+                            key={i}
+                            className="group flex flex-row justify-between items-center gap-4 p-4 lg:p-6 rounded-2xl bg-white border border-[#E7E1D8] hover:border-[#B08B57]/20 transition-all duration-300"
+                        >
+                            <span className="uppercase text-[9px] lg:text-[10px] tracking-[0.15em] text-[#7A746B] font-bold truncate max-w-[40%]">
+                                {key}
+                            </span>
+                            <span className="text-[#1E1E1E] text-sm lg:text-[18px] font-medium text-right break-words max-w-[60%]">
+                                {value}
+                            </span>
+                        </div>
+                    ))}
                 </div>
             </div>
-
         </div>
     );
 }

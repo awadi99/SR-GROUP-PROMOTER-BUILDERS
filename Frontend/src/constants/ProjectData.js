@@ -71,31 +71,31 @@ const projects = [
     ],
 
     // UNITS
-    units: [
-      {
-        type: "1 BHK",
-        area: "650 sq ft",
-        price: "₹39 Lakhs",
-        image: building1,
-        floorPlan: building1,
-      },
-
-      {
-        type: "2 BHK",
-        area: "1050 sq ft",
-        price: "₹58 Lakhs",
-        image: building2,
-        floorPlan: building2,
-      },
-
-      {
-        type: "3 BHK",
-        area: "1450 sq ft",
-        price: "₹82 Lakhs",
-        image: building3,
-        floorPlan: building3,
-      },
-    ],
+// ... inside your project object
+units: [
+  {
+    type: "1 BHK",
+    area: "650 sq ft",
+    price: "₹39 Lakhs",
+    // Array of 3+ images
+    images: [building1, building2, building3], 
+    floorPlan: building1,
+  },
+  {
+    type: "2 BHK",
+    area: "1050 sq ft",
+    price: "₹58 Lakhs",
+    images: [building2, building3, building1],
+    floorPlan: building2,
+  },
+  {
+    type: "3 BHK",
+    area: "1450 sq ft",
+    price: "₹82 Lakhs",
+    images: [building3, building1, building2],
+    floorPlan: building3,
+  },
+],
 
     // LANDMARKS
     landmarks: [

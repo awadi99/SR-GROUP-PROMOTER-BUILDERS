@@ -83,16 +83,7 @@ export default function MapAndContactSection({ project }) {
                             <h3 className="text-base sm:text-lg leading-7 sm:leading-8 font-medium text-[#1E1E1E]">{project.contact.address}</h3>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
-                            <button className="bg-[#B08B57] hover:bg-[#9E7844] active:scale-[0.98] text-white font-medium px-7 sm:px-8 py-4 rounded-full text-sm flex items-center justify-center gap-2 transition-all duration-300 shadow-sm w-full sm:w-auto">
-                                Schedule Visit
-                                <ArrowUpRight size={16} />
-                            </button>
-                            <button className="border border-[#DED8CF] bg-white text-[#1E1E1E] font-medium hover:bg-[#FAF9F6] active:scale-[0.98] px-7 sm:px-8 py-4 rounded-full text-sm flex items-center justify-center gap-2 transition-all duration-300 w-full sm:w-auto">
-                                Download Brochure
-                                <Download size={16} />
-                            </button>
-                        </div>
+
                     </div>
 
                 </div>

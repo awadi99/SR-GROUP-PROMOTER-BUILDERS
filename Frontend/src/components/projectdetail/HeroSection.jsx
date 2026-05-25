@@ -1,117 +1,88 @@
-import React from "react";
+import React, { useState, useCallback } from "react"; 
 import { motion } from "framer-motion";
 import { ArrowLeft, MapPin } from "lucide-react";
+import ResidenceModal from "./ResidenceModal";
 
 export default function HeroSection({ project, onBack }) {
+    const [selectedUnit, setSelectedUnit] = useState(null);
+
+    const handleCloseModal = useCallback(() => {
+        setSelectedUnit(null);
+    }, []);
+
     return (
-        <div className="grid grid-cols-1 xl:grid-cols-[1.7fr_0.8fr] gap-4 md:gap-6 mb-4 md:mb-6 [contain:layout_style]">
+        <div className="flex flex-col gap-6">
+            {/* HERO GRID */}
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr] gap-4">
+                <div className="relative rounded-[24px] md:rounded-[36px] overflow-hidden border border-[#DED8CF] bg-white transform-gpu">
+                    <div className="relative h-[400px] sm:h-[500px] lg:h-[700px]">
+                        <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none" />
 
-            {/* HERO LEFT */}
-            <div className="relative rounded-[24px] sm:rounded-[28px] md:rounded-[36px] overflow-hidden border border-[#DED8CF] bg-white transform-gpu">
-                <div className="relative h-[500px] sm:h-[650px] lg:h-[780px]">
+                        <button 
+                            onClick={onBack} 
+                            className="absolute top-4 left-4 z-20 bg-white/85 backdrop-blur-md border border-white/40 rounded-full px-5 py-2.5 flex items-center gap-2 text-xs hover:bg-white active:scale-95 transition-all duration-300"
+                        >
+                            <ArrowLeft size={14} /> Back
+                        </button>
 
-                    <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover"
-                        loading="eager"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 p-6 sm:p-10 w-full">
+                            <p className="uppercase tracking-[0.22em] text-[10px] text-white/80 mb-2 font-medium">Luxury Residences</p>
+                            <h1 className="text-3xl sm:text-5xl md:text-6xl text-white font-medium mb-4 leading-[1.1] tracking-[-0.03em]">{project.title}</h1>
+                            <p className="max-w-xl text-white/80 text-sm sm:text-base font-light mb-6 line-clamp-2">{project.description}</p>
 
-                    {/* BACK BUTTON */}
-                    <button
-                        onClick={onBack}
-                        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 bg-white/85 backdrop-blur-md border border-white/40 rounded-full px-4 sm:px-5 py-2.5 sm:py-3 flex items-center gap-2 text-xs sm:text-sm hover:bg-white active:scale-95 transition-all duration-300"
-                    >
-                        <ArrowLeft size={16} />
-                        Back
-                    </button>
-
-                    {/* CONTENT ACCENT */}
-                    <div className="absolute bottom-6 sm:bottom-10 left-4 sm:left-8 lg:left-10 right-4 z-20">
-                        <p className="uppercase tracking-[0.22em] text-[10px] sm:text-[11px] text-white/80 mb-3 sm:mb-5 font-medium">
-                            Luxury Residences
-                        </p>
-                        <h1 className="text-[clamp(2.2rem,7vw,6rem)] leading-[0.92] tracking-[-0.05em] text-white font-medium mb-4 sm:mb-6">
-                            {project.title}
-                        </h1>
-                        <p className="max-w-2xl text-white/80 leading-7 sm:leading-8 text-[13px] sm:text-[15px] mb-5 sm:mb-8 font-light">
-                            {project.description}
-                        </p>
-
-                        {/* TAG MODULES */}
-                        <div className="flex flex-wrap gap-2 sm:gap-3">
-                            <div className="bg-white/85 backdrop-blur-md rounded-full px-4 sm:px-5 py-2.5 sm:py-3 flex items-center gap-2 text-xs sm:text-sm font-medium">
-                                <MapPin size={14} className="text-[#A68966]" />
-                                {project.location}
-                            </div>
-                            <div className="bg-white/85 backdrop-blur-md rounded-full px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium">
-                                {project.status}
-                            </div>
-                            <div className="bg-white/85 backdrop-blur-md rounded-full px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium">
-                                {project.possession}
+                            <div className="flex flex-wrap gap-2">
+                                {[project.location, project.status, project.possession].map((tag, i) => (
+                                    <span key={i} className="bg-white/85 backdrop-blur-md rounded-full px-4 py-2 text-[11px] font-medium text-[#1E1E1E] flex items-center gap-1.5">
+                                        {i === 0 && <MapPin size={12} className="text-[#A68966]" />}
+                                        {tag}
+                                    </span>
+                                ))}
                             </div>
                         </div>
                     </div>
 
-                    {/* FLOATING SPECS BLOCK */}
-                    <div className="hidden lg:block absolute bottom-0 right-0 p-6 z-20">
-                        <div className="bg-white/90 backdrop-blur-xl rounded-[28px] border border-white/40 p-6 w-[360px] shadow-sm">
-                            <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <p className="text-[#7A746B] text-[10px] uppercase tracking-[0.18em] mb-2 font-medium">Towers</p>
-                                    <h3 className="text-2xl font-medium text-[#1E1E1E]">{project.specs.towers}</h3>
-                                </div>
-                                <div>
-                                    <p className="text-[#7A746B] text-[10px] uppercase tracking-[0.18em] mb-2 font-medium">Floors</p>
-                                    <h3 className="text-2xl font-medium text-[#1E1E1E]">{project.specs.floors}</h3>
-                                </div>
-                                <div>
-                                    <p className="text-[#7A746B] text-[10px] uppercase tracking-[0.18em] mb-2 font-medium">Architect</p>
-                                    <h3 className="text-base font-medium text-[#1E1E1E] tracking-tight truncate">{project.specs.architect}</h3>
-                                </div>
-                                <div>
-                                    <p className="text-[#7A746B] text-[10px] uppercase tracking-[0.18em] mb-2 font-medium">RERA</p>
-                                    <h3 className="text-base font-medium text-[#1E1E1E] tracking-tight truncate">{project.rera}</h3>
-                                </div>
+                    {/* SPECS BAR */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#DED8CF] border-t border-[#DED8CF]">
+                        {[
+                            { label: 'Towers', val: project.specs.towers },
+                            { label: 'Floors', val: project.specs.floors },
+                            { label: 'Architect', val: project.specs.architect },
+                            { label: 'RERA', val: project.rera }
+                        ].map((spec, i) => (
+                            <div key={i} className="bg-[#F8F5F0] p-4 text-center">
+                                <p className="text-[10px] uppercase tracking-[0.18em] text-[#7A746B] mb-1 font-medium">{spec.label}</p>
+                                <p className="text-sm font-medium text-[#1E1E1E] truncate">{spec.val}</p>
                             </div>
-                        </div>
+                        ))}
                     </div>
-
                 </div>
             </div>
 
-            {/* HERO RIGHT SIDEBAR */}
-            <div className="space-y-4 md:space-y-6 xl:sticky xl:top-28 self-start">
-                {/* RESIDENCE PACKS */}
-                <div className="bg-[#F8F5F0] rounded-[24px] sm:rounded-[30px] border border-[#DED8CF] p-4 sm:p-5">
-                    <div className="flex justify-between items-center mb-5">
-                        <p className="uppercase text-[10px] sm:text-[11px] tracking-[0.18em] text-[#7A746B] font-medium">Available Residences</p>
-                        <span className="text-[#B08B57] text-xs sm:text-sm font-medium">Premium Living</span>
-                    </div>
-
-                    <div className="space-y-4 sm:space-y-5">
+            {/* BOTTOM SECTION */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6">
+                <div className="bg-[#F8F5F0] rounded-[24px] border border-[#DED8CF] p-6">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#7A746B] mb-6 font-medium">Available Residences</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {project.units.map((unit, i) => (
-                            <div key={i} className="bg-white rounded-[22px] overflow-hidden border border-[#E7E1D8] transform-gpu [contain:content]">
-                                <div className="overflow-hidden h-[180px] sm:h-[220px]">
-                                    <motion.img
-                                        src={unit.image}
-                                        alt={unit.type}
+                            <div key={i} className="group bg-white rounded-2xl overflow-hidden border border-[#E7E1D8] transition-all">
+                                <div className="h-[200px] overflow-hidden">
+                                    <motion.img 
+                                        src={unit.image} 
+                                        alt={unit.type} 
                                         className="w-full h-full object-cover"
-                                        whileHover={{ scale: 1.02 }}
-                                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                                        loading="lazy"
+                                        whileHover={{ scale: 1.05 }}
+                                        transition={{ duration: 0.6 }}
                                     />
                                 </div>
-                                <div className="p-4 sm:p-5">
-                                    <div className="flex justify-between gap-4 mb-5">
-                                        <div>
-                                            <h3 className="text-xl sm:text-2xl font-medium text-[#1E1E1E] mb-1">{unit.type}</h3>
-                                            <p className="text-[#7A746B] text-sm font-light">{unit.area}</p>
-                                        </div>
-                                        <div className="text-[#B08B57] text-sm font-medium whitespace-nowrap">{unit.price}</div>
-                                    </div>
-                                    <button className="w-full border border-[#DED8CF] bg-white rounded-full py-3 text-sm font-medium text-[#1E1E1E] hover:bg-[#FAF9F6] active:scale-[0.99] transition-all duration-300">
+                                <div className="p-5">
+                                    <h4 className="text-[#1E1E1E] font-medium text-lg">{unit.type}</h4>
+                                    <p className="text-[#7A746B] text-xs mb-4">{unit.area}</p>
+                                    
+                                    <button 
+                                        onClick={() => setSelectedUnit(unit)} 
+                                        className="w-full py-2.5 border border-[#DED8CF] text-[#1E1E1E] text-xs uppercase tracking-[0.18em] rounded-full hover:bg-[#F8F5F0] transition-all"
+                                    >
                                         View Floor Plan
                                     </button>
                                 </div>
@@ -120,21 +91,19 @@ export default function HeroSection({ project, onBack }) {
                     </div>
                 </div>
 
-                {/* MEDIA PACK */}
-                <div className="bg-[#F8F5F0] rounded-[24px] sm:rounded-[30px] border border-[#DED8CF] p-4 sm:p-5">
-                    <p className="uppercase text-[10px] sm:text-[11px] tracking-[0.18em] text-[#7A746B] mb-5 font-medium">Cinematic Tour</p>
-                    <div className="relative rounded-[22px] overflow-hidden group transform-gpu">
-                        <video
-                            src={project.video}
-                            className="w-full h-[220px] sm:h-[280px] object-cover"
-                            controls
-                            preload="none"
-                            poster={project.image}
-                        />
+                <div className="bg-[#F8F5F0] rounded-[24px] border border-[#DED8CF] p-6">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#7A746B] mb-4 font-medium">Cinematic Tour</p>
+                    <div className="relative rounded-[22px] overflow-hidden aspect-video">
+                        <video src={project.video} className="w-full h-full object-cover" controls poster={project.image} />
                     </div>
                 </div>
             </div>
 
+            <ResidenceModal 
+                isOpen={!!selectedUnit} 
+                onClose={handleCloseModal} 
+                unit={selectedUnit} 
+            />
         </div>
     );
 }

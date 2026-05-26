@@ -3,73 +3,119 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { residencesSchema } from '../../schema/projectSchema.js';
 import { useProjectStore } from '../../store/useProjectStore.js';
-
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 
 export default function ResidencesSection({ onNext, onPrev }) {
     const { sections, updateSection } = useProjectStore();
 
-    const { register, control, handleSubmit, formState: { errors } } = useForm({
+    const {
+        register,
+        control,
+        handleSubmit,
+        setValue,
+        trigger,
+        formState: { errors, isSubmitting }
+    } = useForm({
         resolver: zodResolver(residencesSchema),
-        defaultValues: { units: sections.residences?.length ? sections.residences : [{ type: '', area: '', price: '' }] }
+        defaultValues: {
+            commonVideoUrl: sections.residences?.commonVideoUrl || '',
+            units: sections.residences?.units?.length 
+                ? sections.residences.units 
+                : [{ type: '', area: '', price: '', images: [] }]
+        }
     });
 
     const { fields, append, remove } = useFieldArray({ control, name: "units" });
 
+    // MOBILE-FRIENDLY FILE HANDLER
+    const handleFileChange = async (index, e) => {
+        const files = Array.from(e.target.files || []);
+        
+        // 1. Update form value immediately
+        setValue(`units.${index}.images`, files, {
+            shouldValidate: true,
+            shouldDirty: true,
+            shouldTouch: true
+        });
+
+        // 2. Delay trigger for Mobile Browsers to ensure state is ready
+        setTimeout(async () => {
+            await trigger(`units.${index}.images`);
+        }, 100);
+    };
+
     const onSubmit = (data) => {
-        updateSection('residences', data.units);
+        updateSection('residences', data);
         onNext();
     };
 
     const inputClasses = "bg-[#0a0a0a] border-[#B08B57]/20 focus:border-[#B08B57] text-white placeholder:text-gray-600 rounded-none w-full";
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-10 animate-in fade-in duration-700 w-full max-w-3xl">
-            {/* Header */}
-            <div>
-                <h2 className="text-xl md:text-2xl font-light text-white tracking-[0.05em] uppercase">Available Residences</h2>
-                <div className="h-[1px] w-12 bg-[#B08B57] mt-3"></div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
+            <h2 className="text-lg font-light text-white uppercase tracking-widest">Available Residences</h2>
+
+            {/* Video Input */}
+            <div className="p-4 border border-[#B08B57]/20 bg-[#0a0a0a]">
+                <Input {...register("commonVideoUrl")} label="Project Video Tour Link (Common)" className={inputClasses} />
             </div>
 
-            {/* Units Container */}
+            {/* Units List */}
             <div className="space-y-6">
                 {fields.map((field, index) => (
-                    <div key={field.id} className="relative p-6 border border-[#B08B57]/20 bg-[#0a0a0a]/80 group transition-all hover:border-[#B08B57]/50">
-                        {/* Highly Visible Delete Button */}
-                        <button
-                            type="button"
-                            onClick={() => remove(index)}
-                            className="absolute -top-3 -right-3 bg-[#1a1a1a] border border-[#B08B57] text-[#B08B57] text-[10px] font-bold px-3 py-1 uppercase tracking-[0.2em] shadow-lg hover:bg-[#B08B57] hover:text-black transition-all duration-300 z-10"
-                            title="Delete this unit"
+                    <div key={field.id} className="p-4 border border-[#B08B57]/20 bg-[#0a0a0a]/50 relative">
+                        <button 
+                            type="button" 
+                            onClick={() => remove(index)} 
+                            className="absolute top-2 right-2 text-[9px] text-[#B08B57] border border-[#B08B57] px-2 py-1 uppercase hover:bg-[#B08B57] hover:text-black transition-colors"
                         >
-                            ✕ Delete
+                            Remove
                         </button>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                            <Input {...register(`units.${index}.type`)} label="Unit Type" placeholder="2 BHK" className={inputClasses} />
-                            <Input {...register(`units.${index}.area`)} label="Area (sq ft)" placeholder="1200" className={inputClasses} />
-                            <Input {...register(`units.${index}.price`)} label="Price" placeholder="₹ Cr" className={inputClasses} />
+                        <div className="grid grid-cols-1 gap-4 mb-4">
+                            <Input {...register(`units.${index}.type`)} label="Unit Type" className={inputClasses} />
+                            <Input {...register(`units.${index}.area`)} label="Area (sq ft)" className={inputClasses} />
+                            <Input {...register(`units.${index}.price`)} label="Price" className={inputClasses} />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-[9px] uppercase tracking-[0.2em] text-[#B08B57] font-bold">
+                                Upload 4 Images (Required)
+                            </label>
+                            <input
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                onChange={(e) => handleFileChange(index, e)}
+                                className="w-full bg-[#1a1a1a] border border-[#B08B57]/20 p-2 text-white text-[10px] cursor-pointer"
+                            />
+                            {errors.units?.[index]?.images && (
+                                <p className="text-[9px] text-red-500 uppercase mt-1">
+                                    {errors.units[index].images.message}
+                                </p>
+                            )}
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Visually Weighted Add Button */}
             <Button
                 type="button"
-                onClick={() => append({ type: '', area: '', price: '' })}
-                className="w-full py-5 border border-[#B08B57] bg-[#B08B57]/5 text-[#B08B57] hover:bg-[#B08B57] hover:text-black transition-all duration-300 uppercase tracking-[0.2em] text-[11px] font-bold shadow-md"
+                onClick={() => append({ type: '', area: '', price: '', images: [] })}
+                className="w-full py-4 border border-dashed border-[#B08B57] text-[#B08B57] text-[10px] uppercase hover:bg-[#B08B57]/10"
             >
-                + Add New Residence Type
+                + Add New Unit
             </Button>
 
-            {/* Navigation */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                <Button type="button" onClick={onPrev} className="w-full sm:w-auto px-10 py-3 bg-transparent border border-[#333] text-gray-400 hover:text-white hover:border-gray-500 transition-all uppercase tracking-[0.2em] text-[10px]">
-                    Back
-                </Button>
-                <Button type="submit" className="w-full sm:w-auto px-10 py-3 bg-transparent border border-[#B08B57] text-[#B08B57] hover:bg-[#B08B57] hover:text-black transition-all uppercase tracking-[0.2em] text-[10px]">
+            {/* Navigation Buttons */}
+            <div className="flex gap-4 pt-4">
+                <Button type="button" onClick={onPrev} className="flex-1 py-3 border border-[#333] text-gray-400">Back</Button>
+                <Button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="flex-1 py-3 border border-[#B08B57] text-[#B08B57] disabled:opacity-50"
+                >
                     Save & Continue
                 </Button>
             </div>

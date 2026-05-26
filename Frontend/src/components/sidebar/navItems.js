@@ -45,13 +45,13 @@ export const mainSidebarItems = [
 
             {
                 name: "Edit Project",
-                path: "/dashboard/projects/edit",
+                path: "/dashboard/projects",
                 icon: Pencil,
             },
 
             {
                 name: "Delete Project",
-                path: "/dashboard/projects/delete",
+                path: "/dashboard/delete-projects",
                 icon: Trash2,
                 danger: true,
             },
@@ -59,29 +59,7 @@ export const mainSidebarItems = [
         ],
     },
 
-    {
-        section: "Project Media",
-
-        items: [
-            {
-                name: "Project Gallery",
-                path: "/dashboard/project/gallery",
-                icon: ImageIcon,
-            },
-
-            {
-                name: "Project Videos",
-                path: "/dashboard/project/videos",
-                icon: Video,
-            },
-
-            {
-                name: "Location & Maps",
-                path: "/dashboard/project/location",
-                icon: MapPin,
-            },
-        ],
-    },
+  
 
     {
         section: "Administration",

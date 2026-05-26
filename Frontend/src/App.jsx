@@ -10,6 +10,9 @@ import SmoothScroll from './components/scroll/SmoothScroll';
 import NetworkErrorBoundary from './error/NetworkErrorBoundary';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import { useProjectStore } from './store/useProjectStore';
+import projects from './constants/ProjectData';
+
 
 
 // Lazy loading pages (Production-grade code splitting)
@@ -24,13 +27,14 @@ const CreateProject = lazy(() => import('./pages/CreateProject'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgetPassword'));
-const ProjectMediaLayout = lazy(() => import('./components/media/ProjectMediaLayout'));
-const ProjectGallery = lazy(()=>import('./components/media/ProjectGallery'));
-const ProjectVideos=lazy(()=>import('./components/media/ProjectVideos'));
-const LocationMaps =lazy(()=>import('./components/media/LocationMaps'));
+const EditProjectPage = lazy(() => import('./components/editproject/EditProjectPage'));
+const ProjectListing =lazy(()=> import('./pages/ProjectListing'));
+const DeleteProjectPage = lazy(()=>import('./components/deleteproject/DeleteProjectPage'));
+const Profile = lazy(()=> import('./pages/Profile'));
 
 
 export default function App() {
+  // const { projects } = useProjectStore();  
   const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem("intro_viewed"));
 
   return (
@@ -70,11 +74,13 @@ export default function App() {
                   <Route index element={<Dashboard />} />
                   <Route path="all-projects" element={<AdminProjectGrid />} />
                   <Route path="project/:id" element={<AdminProjectDetail />} />
-                  <Route path="project/:id/media" element={<ProjectMediaLayout />} />
-                  <Route path="project/gallery" element={<ProjectGallery />} />
-                  <Route path="project/videos" element={<ProjectVideos />} />
-                  <Route path="project/location" element={<LocationMaps />} />
+                 
+
                   <Route path="create-project" element={<CreateProject />} />
+                  <Route path='projects' element={<ProjectListing projects={projects} />} />
+                  <Route path="edit-project/:id" element={<EditProjectPage />} />
+                  <Route path="delete-projects" element={<DeleteProjectPage projects ={projects} />} />
+                  <Route path="profile" element={<Profile/>}/>
                   <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Route>
 

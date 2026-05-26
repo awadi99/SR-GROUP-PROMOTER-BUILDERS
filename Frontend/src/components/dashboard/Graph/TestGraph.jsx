@@ -20,13 +20,26 @@ const TestGraph = memo(({ testData }) => {
     return (
         <div className="w-full bg-[#0A0A0A] p-8 rounded-2xl border border-[#1A1A1A] shadow-none">
             <header className="flex items-center justify-between mb-8">
-                <h2 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Weekly Performance</h2>
+                <h2 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">
+                    Weekly Performance
+                </h2>
             </header>
 
-            <div className="w-full h-[300px]">
+            {/* Added min-h and min-w to prevent Recharts layout crash */}
+            <div 
+                key={data?.length ? 'loaded' : 'empty'} 
+                className="w-full h-[300px] min-h-[300px] min-w-0"
+            >
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                        <CartesianGrid vertical={false} stroke="#1A1A1A" strokeDasharray="3 3" />
+                    <LineChart 
+                        data={data} 
+                        margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
+                    >
+                        <CartesianGrid 
+                            vertical={false} 
+                            stroke="#1A1A1A" 
+                            strokeDasharray="3 3" 
+                        />
                         <XAxis
                             dataKey="day"
                             axisLine={false}
@@ -39,11 +52,14 @@ const TestGraph = memo(({ testData }) => {
                             tickLine={false}
                             tick={{ fontSize: 10, fontWeight: 700, fill: '#555' }}
                         />
-                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#B08B57', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                        <Tooltip 
+                            content={<CustomTooltip />} 
+                            cursor={{ stroke: '#B08B57', strokeWidth: 1, strokeDasharray: '4 4' }} 
+                        />
                         <Line
                             type="monotone"
                             dataKey="tests"
-                            stroke="#B08B57" // SR Group Bronze Accent
+                            stroke="#B08B57"
                             strokeWidth={3}
                             dot={{ r: 4, fill: '#050505', stroke: '#B08B57', strokeWidth: 2 }}
                             activeDot={{ r: 6, fill: '#B08B57', stroke: '#050505', strokeWidth: 2 }}

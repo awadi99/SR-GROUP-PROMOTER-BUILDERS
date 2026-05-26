@@ -3,18 +3,18 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { visionSchema } from '../../schema/projectSchema.js';
 import { useProjectStore } from '../../store/useProjectStore.js';
-
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 
 export default function VisionSection({ onNext, onPrev }) {
     const { sections, updateSection } = useProjectStore();
 
-    const { register, control, handleSubmit, formState: { errors } } = useForm({
+    const { register, control, handleSubmit, setValue, trigger, formState: { errors } } = useForm({
         resolver: zodResolver(visionSchema),
         defaultValues: {
             vision: sections.vision?.vision || '',
-            features: sections.vision?.features?.length ? sections.vision.features : [{ feature: '' }]
+            features: sections.vision?.features?.length ? sections.vision.features : [{ feature: '' }],
+            images: sections.vision?.images || []
         }
     });
 
@@ -41,29 +41,43 @@ export default function VisionSection({ onNext, onPrev }) {
                 <textarea
                     {...register("vision")}
                     rows={5}
-                    className="w-full p-4 bg-[#0a0a0a] border border-[#B08B57]/20 focus:border-[#B08B57] outline-none transition-all text-white placeholder:text-gray-600 resize-none"
-                    placeholder="Describe the architectural concept..."
+                    className="w-full p-4 bg-[#0a0a0a] border border-[#B08B57]/20 focus:border-[#B08B57] outline-none text-white placeholder:text-gray-600 resize-none"
+                    placeholder="Describe the architectural concept (min 50 chars)..."
                 />
                 {errors.vision && <p className="text-[#B08B57] text-[10px] uppercase">{errors.vision.message}</p>}
+            </div>
+
+            {/* Image Uploader for 3 Images */}
+            <div className="space-y-2">
+                <label className="text-[10px] uppercase tracking-[0.2em] text-[#B08B57] font-bold">Upload 3 Vision Images (Required)</label>
+                <input 
+                    type="file" 
+                    multiple 
+                    accept="image/*"
+                    onChange={(e) => {
+                        const files = Array.from(e.target.files);
+                        setValue("images", files);
+                        trigger("images");
+                    }}
+                    className="w-full bg-[#1a1a1a] border border-[#B08B57]/20 p-2 text-white text-xs cursor-pointer" 
+                />
+                {errors.images && <p className="text-[10px] text-red-500 uppercase">{errors.images.message}</p>}
             </div>
 
             {/* Key Features List */}
             <div className="space-y-6">
                 <label className="block text-[10px] uppercase tracking-[0.2em] text-[#B08B57] font-bold">Key Highlights</label>
                 {fields.map((field, index) => (
-                    // Add relative to container so the absolute button stays aligned
                     <div key={field.id} className="relative group">
                         <Input
                             {...register(`features.${index}.feature`)}
-                            placeholder="e.g., Infinity Swimming Pool"
-                            className={`${inputClasses} pr-20`} // Add right padding to prevent text overlap
+                            placeholder="e.g., Sustainable Design"
+                            className={`${inputClasses} pr-20`}
                         />
-
-                        {/* Highly Visible Action Button */}
                         <button
                             type="button"
                             onClick={() => remove(index)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#0a0a0a] border border-[#B08B57]/30 text-[9px] uppercase tracking-[0.1em] text-[#B08B57] px-3 py-1 hover:bg-[#B08B57] hover:text-black transition-all duration-300 opacity-0 group-hover:opacity-100"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#0a0a0a] border border-[#B08B57]/30 text-[9px] uppercase text-[#B08B57] px-3 py-1 hover:bg-[#B08B57] hover:text-black transition-all"
                         >
                             Delete
                         </button>
@@ -73,20 +87,16 @@ export default function VisionSection({ onNext, onPrev }) {
                 <Button
                     type="button"
                     onClick={() => append({ feature: '' })}
-                    className="w-full py-4 border border-dashed border-[#B08B57]/30 text-[#B08B57]/70 hover:border-[#B08B57] hover:text-[#B08B57] transition-all duration-300 uppercase tracking-[0.2em] text-[10px]"
+                    className="w-full py-4 border border-dashed border-[#B08B57]/30 text-[#B08B57]/70 hover:border-[#B08B57] uppercase tracking-[0.2em] text-[10px]"
                 >
                     + Add Feature
                 </Button>
             </div>
 
-            {/* Navigation Controls */}
+            {/* Controls */}
             <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                <Button type="button" onClick={onPrev} className="w-full sm:w-auto px-10 py-3 bg-transparent border border-[#333] text-gray-400 hover:text-white hover:border-gray-500 transition-all uppercase tracking-[0.2em] text-[10px]">
-                    Back
-                </Button>
-                <Button type="submit" className="w-full sm:w-auto px-10 py-3 bg-transparent border border-[#B08B57] text-[#B08B57] hover:bg-[#B08B57] hover:text-black transition-all uppercase tracking-[0.2em] text-[10px]">
-                    Save & Continue
-                </Button>
+                <Button type="button" onClick={onPrev} className="w-full sm:w-auto px-10 py-3 border border-[#333] text-gray-400 uppercase tracking-[0.2em] text-[10px]">Back</Button>
+                <Button type="submit" className="w-full sm:w-auto px-10 py-3 border border-[#B08B57] text-[#B08B57] uppercase tracking-[0.2em] text-[10px]">Save & Continue</Button>
             </div>
         </form>
     );

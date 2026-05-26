@@ -1,0 +1,64 @@
+import mongoose from "mongoose";
+
+const authSchema = new mongoose.Schema(
+    {
+        adminCode: {
+            type: String,
+            required: true, 
+            unique: true,
+            sparse: true,
+            trim: true,
+            index: true,
+            minLength: 3,
+            maxLength: 30,
+        },
+        fullName: {
+            type: String,
+            index: true,
+            required: true,
+            trim: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+            index: true,
+            match: [
+                /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+                "Please enter a valid email",
+            ],
+        },
+        password: {
+            type: String,
+            required: function () {
+                return !this.isGoogleUser;
+            },
+            minLength: 8,
+            select: false,
+        },
+        role: {
+            type: String,
+            required: true,
+            enum: ["admin"],
+            default: "admin", 
+        },
+        isGoogleUser: {
+            type: Boolean,
+            default: false,
+        },
+        profilePic: {
+            type: String,
+            default: "",
+        },
+    },
+    { timestamps: true }
+);
+
+
+authSchema.index({ adminCode: 1, email: 1 });
+
+const User = mongoose.model("User", authSchema);
+
+export default User;

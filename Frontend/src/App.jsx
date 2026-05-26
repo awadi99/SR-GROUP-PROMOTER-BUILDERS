@@ -31,6 +31,8 @@ const EditProjectPage = lazy(() => import('./components/editproject/EditProjectP
 const ProjectListing =lazy(()=> import('./pages/ProjectListing'));
 const DeleteProjectPage = lazy(()=>import('./components/deleteproject/DeleteProjectPage'));
 const Profile = lazy(()=> import('./pages/Profile'));
+const GoogleAuthSuccess = lazy(() => import('./page/GoogleAuthSuccess'));
+
 
 
 export default function App() {
@@ -69,6 +71,7 @@ export default function App() {
                 <Route path="/luxury" element={<LuxuryLayout />}>
                   <Route path="project/:id" element={<ProjectDetail />} />
                 </Route>
+                <Route path='/auth/google/success' element={<GoogleAuthSuccess />} />
 
                 <Route path="/dashboard" element={<MainLayout />}>
                   <Route index element={<Dashboard />} />

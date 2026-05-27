@@ -1,7 +1,7 @@
 import React from 'react';
 import { Briefcase, Search, BarChart3 } from 'lucide-react';
 import Card from '../components/dashboard/Cards/Card';
-import TestGraph from '../components/dashboard/Graph/TestGraph';
+// import TestGraph from '../components/dashboard/Graph/TestGraph';
 
 export default function DashboardLayout() {
     return (
@@ -43,7 +43,7 @@ export default function DashboardLayout() {
                     </div>
                         
                     <div className="h-[400px] w-full rounded-2xl bg-[#0A0A0A] border border-[#1A1A1A]" >
-                    <TestGraph/>
+                    {/* <TestGraph/> */}
                     </div>
 
                    

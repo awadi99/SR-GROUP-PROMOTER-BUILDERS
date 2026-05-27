@@ -2,52 +2,161 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 const initialSections = {
-    identity: { title: "", tagline: "", description: "" },
-    specs: { towers: "", floors: "", architect: "", rera: "" },
-    residences: { commonVideoUrl: "", units: [] },
-    vision: { vision: '', features: [], images: [] }, // 'images' array added
-    location: { mapEmbed: "", landmarks: [] },
-    contact: { email: "", phone: "", address: "", salesManagerName: "" }
+
+    identity: {
+        title: "",
+        tagline: "",
+        description: ""
+    },
+
+    specs: {
+        towers: "",
+        floors: "",
+        architect: "",
+        rera: ""
+    },
+
+    residences: {
+        commonVideoUrl: "",
+        units: []
+    },
+
+    vision: {
+        vision: '',
+        features: [],
+        images: []
+    },
+
+    location: {
+        mapEmbed: "",
+        landmarks: []
+    },
+
+    contact: {
+        email: "",
+        phone: "",
+        address: "",
+        salesManagerName: ""
+    }
 };
 
 export const useProjectStore = create(
+
     persist(
+
         (set) => ({
+
             sections: initialSections,
+
             updateSection: (sectionKey, data) =>
+
                 set((state) => ({
-                    sections: { 
-                        ...state.sections, 
-                        [sectionKey]: { ...state.sections[sectionKey], ...data } 
+
+                    sections: {
+
+                        ...state.sections,
+
+                        [sectionKey]: {
+
+                            ...state.sections[sectionKey],
+
+                            ...data
+                        }
                     }
                 })),
-            resetStore: () => set({ sections: initialSections }),
+
+            resetStore: () =>
+                set({
+                    sections: initialSections
+                }),
+
         }),
+
         {
             name: 'project-draft-storage',
-            // IMPORTANT: 'partialize' prevents File objects from being stored in localStorage
+
+            // Prevent File objects from saving in localStorage
             partialize: (state) => ({
+
                 sections: {
-                    identity: state.sections.identity,
-                    specs: state.sections.specs,
+
+                    // Identity
+                    identity: {
+                        ...state.sections.identity
+                    },
+
+                    // Specs
+                    specs: {
+                        ...state.sections.specs
+                    },
+
+                    // Residences
                     residences: {
-                        commonVideoUrl: state.sections.residences?.commonVideoUrl,
-                        units: state.sections.residences?.units?.map(u => ({
-                            type: u.type, 
-                            area: u.area, 
-                            price: u.price
-                            // 'images' is excluded intentionally
-                        })) || []
+
+                        commonVideoUrl:
+                            state.sections.residences?.commonVideoUrl || "",
+
+                        units:
+
+                            state.sections.residences?.units?.map((unit) => ({
+
+                                type:
+                                    unit?.type || "",
+
+                                area:
+                                    unit?.area || "",
+
+                                price:
+                                    unit?.price || "",
+
+                                // IMPORTANT
+                                // Never save image File objects
+                                images: []
+
+                            })) || []
                     },
-                    vision: { 
-                        vision: state.sections.vision?.vision, 
-                        features: state.sections.vision?.features 
-                        // 'images' is excluded intentionally
+
+                    // Vision
+                    vision: {
+
+                        vision:
+                            state.sections.vision?.vision || "",
+
+                        features:
+                            state.sections.vision?.features || [],
+
+                        // IMPORTANT
+                        // Never persist images
+                        images: []
                     },
-                    location: state.sections.location,
-                    contact: state.sections.contact,
+
+                    // Location
+                    location: {
+
+                        mapEmbed:
+                            state.sections.location?.mapEmbed || "",
+
+                        landmarks:
+                            state.sections.location?.landmarks || []
+                    },
+
+                    // Contact
+                    contact: {
+
+                        email:
+                            state.sections.contact?.email || "",
+
+                        phone:
+                            state.sections.contact?.phone || "",
+
+                        address:
+                            state.sections.contact?.address || "",
+
+                        salesManagerName:
+                            state.sections.contact?.salesManagerName || ""
+                    }
                 }
-            }),
+            })
         }
     )
 );

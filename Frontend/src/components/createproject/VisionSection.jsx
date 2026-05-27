@@ -9,7 +9,14 @@ import Input from '../ui/Input';
 export default function VisionSection({ onNext, onPrev }) {
     const { sections, updateSection } = useProjectStore();
 
-    const { register, control, handleSubmit, setValue, trigger, formState: { errors } } = useForm({
+    const { 
+        register, 
+        control, 
+        handleSubmit, 
+        setValue, 
+        trigger, 
+        formState: { errors } 
+    } = useForm({
         resolver: zodResolver(visionSchema),
         defaultValues: {
             vision: sections.vision?.vision || '',
@@ -56,7 +63,15 @@ export default function VisionSection({ onNext, onPrev }) {
                     accept="image/*"
                     onChange={(e) => {
                         const files = Array.from(e.target.files);
-                        setValue("images", files);
+                        setValue(
+                            "images",
+                            [...files],
+                            {
+                                shouldValidate: true,
+                                shouldDirty: true,
+                                shouldTouch: true
+                            }
+                        );
                         trigger("images");
                     }}
                     className="w-full bg-[#1a1a1a] border border-[#B08B57]/20 p-2 text-white text-xs cursor-pointer" 

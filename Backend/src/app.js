@@ -6,6 +6,7 @@ import compression from 'compression';
 import passport from 'passport';
 
 import authRoutes from "./module/auth/auth.router.js";
+import projectRoutes from './module/project/project.router.js';
 // Commented out until you are ready to connect these
 // import userRoutes from './module/user/user.router.js';
 // import testRoutes from './module/test/test.router.js';
@@ -43,17 +44,24 @@ app.use(cors({
 }));
 
 // 5. Body Parsing (Standard)
-app.use(express.json({ limit: '50kb' })); 
-app.use(express.urlencoded({ extended: true, limit: '50kb' }));
+app.use(express.json({
+    limit: "50mb"
+}));
+
+app.use(express.urlencoded({
+    extended: true,
+    limit: "50mb"
+}));
 
 // 6. Auth Middleware
 app.use(cookieParser());
 app.use(passport.initialize());
 
 // 7. Routes
-app.get("/", (req, res) => res.send("SRGroup API is live 🚀"));
+app.get("/", (req, res) => res.send("SRGroup API is live "));
 app.get("/ping", (req, res) => res.status(200).send("pong"));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/project",projectRoutes)
 
 export default app;

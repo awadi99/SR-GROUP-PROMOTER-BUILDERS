@@ -79,7 +79,7 @@ export const googleCallback = async (req, res) => {
         const token = generateToken({
             id: req.user._id,
             role: req.user.role,
-            erpId: req.user.erpId
+            adminCode: req.user.adminCode
         }, res);
 
         const frontendUrl = process.env.CLIENT_URL || "http://localhost:5173";

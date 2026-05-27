@@ -29,7 +29,7 @@ const verifyLimiter = rateLimit({
     standardHeaders: true, // Render ke piche proxy headers ko track karne ke liye
     legacyHeaders: false
 });
-router.post("/verify-admin-code", verifyLimiter, verifyadminCode);
+router.post("/verify-admincode", verifyLimiter, verifyadminCode);
 
 // 3. Current User Route
 router.get("/me", protect, (req, res) => {

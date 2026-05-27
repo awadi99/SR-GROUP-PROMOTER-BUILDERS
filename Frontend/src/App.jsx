@@ -31,7 +31,7 @@ const EditProjectPage = lazy(() => import('./components/editproject/EditProjectP
 const ProjectListing =lazy(()=> import('./pages/ProjectListing'));
 const DeleteProjectPage = lazy(()=>import('./components/deleteproject/DeleteProjectPage'));
 const Profile = lazy(()=> import('./pages/Profile'));
-const GoogleAuthSuccess = lazy(() => import('./page/GoogleAuthSuccess'));
+const GoogleAuthSuccess = lazy(() => import('./pages/GoogleAuthSuccess'));
 
 
 

@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { identitySchema } from '../../schema/projectSchema.js'; 
 import { useProjectStore } from '../../store/useProjectStore.js';
 
-// Assuming you will update these components to accept 'className' or 'variant'
 import Button from '../ui/Button'; 
 import Input from '../ui/Input';
 

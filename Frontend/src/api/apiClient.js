@@ -1,15 +1,13 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://api.karmaveerscienceacademy.in/api',
-  timeout: 8000, 
+  // Localhost setup for development
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  timeout: 120000, 
   withCredentials: true, 
-  headers: {
-    'Content-Type': 'application/json',
-  }
 });
 
-// ✅ NEW: Attach JWT token for Google OAuth users
+// ✅ Request Interceptor: Attach JWT Token securely
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("jwt");
@@ -21,12 +19,16 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-
+// ✅ Response Interceptor: Handle Session Expiry
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      return Promise.reject(error);
+      localStorage.removeItem("jwt");
+      sessionStorage.clear();
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

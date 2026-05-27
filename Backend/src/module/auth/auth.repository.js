@@ -16,5 +16,5 @@ export const createUser = async (data) => {
 
 // findById ke liye bhi .lean() use karein agar sirf data read karna hai
 export const findUserById = async (userId) => { 
-    return await User.findById(userId).lean();
+    return await User.findById(userId)
 };

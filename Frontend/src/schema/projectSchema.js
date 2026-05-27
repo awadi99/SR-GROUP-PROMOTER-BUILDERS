@@ -1,76 +1,247 @@
 import { z } from 'zod';
 
+// ======================================================
+// FILE VALIDATION CONFIG
+// ======================================================
 
-const MAX_FILE_SIZE = 5000000;
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const MAX_FILE_SIZE = 15 * 1024 * 1024;
+
+const ACCEPTED_IMAGE_TYPES = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp"
+];
+
+// ======================================================
+// PRODUCTION SAFE FILE SCHEMA
+// ======================================================
 
 const fileSchema = z
     .any()
-    .refine((file) => file !== undefined && file !== null, "Image required")
-    .refine((file) => file?.size <= 5000000, "Max size 5MB")
-    .refine((file) => ["image/jpeg", "image/png", "image/webp"].includes(file?.type), "Invalid format");
-// 1. Identity Schema
+    .refine(
+        (file) => file instanceof File,
+        {
+            message: "Please upload a valid image file"
+        }
+    )
+    .refine(
+        (file) => file?.size <= MAX_FILE_SIZE,
+        {
+            message: "Max image size is 5MB"
+        }
+    )
+    .refine(
+        (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+        {
+            message: "Only JPG, PNG & WEBP images are allowed"
+        }
+    );
+
+// ======================================================
+// 1. IDENTITY SCHEMA
+// ======================================================
+
 export const identitySchema = z.object({
-    title: z.string().min(3, "Title must be at least 3 characters"),
-    tagline: z.string().min(5, "Tagline must be at least 5 characters"),
-    description: z.string().min(20, "Description must be at least 20 characters"),
+
+    title: z
+        .string()
+        .trim()
+        .min(3, "Title must be at least 3 characters")
+        .max(120, "Title too long"),
+
+    tagline: z
+        .string()
+        .trim()
+        .min(5, "Tagline must be at least 5 characters")
+        .max(200, "Tagline too long"),
+
+    description: z
+        .string()
+        .trim()
+        .min(20, "Description must be at least 20 characters")
+        .max(5000, "Description too long"),
 });
 
-// 2. Specifications Schema
+// ======================================================
+// 2. SPECIFICATIONS SCHEMA
+// ======================================================
+
 export const specsSchema = z.object({
-    towers: z.string().min(1, "Number of towers is required"),
-    floors: z.string().min(1, "Number of floors is required"),
-    architect: z.string().min(3, "Architect name is required"),
-    rera: z.string().min(5, "Valid RERA registration number required"),
+
+    towers: z
+        .string()
+        .trim()
+        .min(1, "Number of towers is required"),
+
+    floors: z
+        .string()
+        .trim()
+        .min(1, "Number of floors is required"),
+
+    architect: z
+        .string()
+        .trim()
+        .min(3, "Architect name is required"),
+
+    rera: z
+        .string()
+        .trim()
+        .min(5, "Valid RERA number required"),
 });
 
-// 3. Residences Schema (Dynamic Array)
+// ======================================================
+// 3. RESIDENCES SCHEMA
+// ======================================================
+
 export const residencesSchema = z.object({
-    commonVideoUrl: z.string().url().optional().or(z.literal("")),
-    units: z.array(z.object({
-        type: z.string().min(1, "Required"),
-        area: z.string().min(1, "Required"),
-        price: z.string().min(1, "Required"),
-        images: z.array(fileSchema)
-            .min(4, "Must upload exactly 4 images")
-            .max(4, "Only 4 images allowed"),
-    })).min(1, "At least one unit required"),
+
+    commonVideoUrl: z
+        .string()
+        .url("Invalid video URL")
+        .optional()
+        .or(z.literal("")),
+
+    units: z.array(
+
+        z.object({
+
+            type: z
+                .string()
+                .trim()
+                .min(1, "Unit type required"),
+
+            area: z
+                .string()
+                .trim()
+                .min(1, "Area required"),
+
+            price: z
+                .string()
+                .trim()
+                .min(1, "Price required"),
+
+                images: z
+                .array(fileSchema)
+                .optional()
+                .default([])
+                .refine(
+                    (files) => files.length === 4,
+                    {
+                        message: "Please upload exactly 4 images"
+                    }
+                ),
+        })
+
+    ).min(1, "At least one unit required"),
 });
-// 4. Vision Schema (Dynamic Features)
-// 4. Vision Schema (Updated)
+
+// ======================================================
+// 4. VISION SCHEMA
+// ======================================================
+
 export const visionSchema = z.object({
-    vision: z.string().min(50, "Vision statement must be at least 50 characters"),
-    features: z.array(z.object({
-        feature: z.string().min(1, "Feature description is required")
-    })).min(1, "Add at least one feature"),
-    // 3 images mandatory
-    images: z.array(fileSchema)
-        .min(3, "Please upload exactly 3 images")
-        .max(3, "Only 3 images allowed"),
+
+    vision: z
+        .string()
+        .trim()
+        .min(50, "Vision statement must be at least 50 characters")
+        .max(5000, "Vision statement too long"),
+
+    features: z.array(
+
+        z.object({
+
+            feature: z
+                .string()
+                .trim()
+                .min(1, "Feature description required")
+        })
+
+    ).min(1, "Add at least one feature"),
+
+    images: z
+    .array(fileSchema)
+    .optional()
+    .default([])
+    .refine(
+        (files) => files.length === 3,
+        {
+            message: "Please upload exactly 3 images"
+        }
+    ),
 });
-// 5. Location Schema (Dynamic Landmarks)
+
+// ======================================================
+// 5. LOCATION SCHEMA
+// ======================================================
+
 export const locationSchema = z.object({
-    mapEmbed: z.string().url("Valid Google Maps URL is required"),
-    landmarks: z.array(z.object({
-        name: z.string().min(1, "Landmark name required"),
-        distance: z.string().min(1, "Distance required")
-    })).min(1, "Add at least one landmark"),
+
+    mapEmbed: z
+        .string()
+        .url("Valid Google Maps URL required"),
+
+    landmarks: z.array(
+
+        z.object({
+
+            name: z
+                .string()
+                .trim()
+                .min(1, "Landmark name required"),
+
+            distance: z
+                .string()
+                .trim()
+                .min(1, "Distance required"),
+        })
+
+    ).min(1, "Add at least one landmark"),
 });
 
-// 6. Contact Schema
+// ======================================================
+// 6. CONTACT SCHEMA
+// ======================================================
+
 export const contactSchema = z.object({
-    phone: z.string().min(10, "Valid phone number is required"),
-    email: z.string().email("Invalid email format"),
-    address: z.string().min(10, "Full address is required"),
-    salesManagerName: z.string().min(2, "Sales manager name is required"),
+
+    phone: z
+        .string()
+        .trim()
+        .min(10, "Valid phone number required"),
+
+    email: z
+        .string()
+        .trim()
+        .email("Invalid email format"),
+
+    address: z
+        .string()
+        .trim()
+        .min(10, "Full address required"),
+
+    salesManagerName: z
+        .string()
+        .trim()
+        .min(2, "Sales manager name required"),
 });
 
-// 7. MASTER SCHEMA (For Final Submission Validation)
+// ======================================================
+// 7. MASTER PROJECT SCHEMA
+// ======================================================
+
 export const masterProjectSchema = z.object({
+
     identity: identitySchema,
+
     specs: specsSchema,
+
     residences: residencesSchema,
+
     vision: visionSchema,
+
     location: locationSchema,
+
     contact: contactSchema,
 });

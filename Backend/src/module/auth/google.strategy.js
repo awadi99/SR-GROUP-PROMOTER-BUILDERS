@@ -20,7 +20,7 @@ passport.use(
                 if (!email) return done(null, false, { message: "Email not found" });
 
                 // 1. Existing User Check (Lean for performance)
-                const existingUser = await User.findOne({ email }).lean();
+                const existingUser = await User.findOne({ email });
                 if (existingUser) return done(null, existingUser);
 
                 // 2. New Registration: Validate AdminCode

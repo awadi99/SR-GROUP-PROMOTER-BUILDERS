@@ -27,7 +27,7 @@ export default function Login() {
 
     const onSubmit = (data) => {
         loginUser.mutate(data, {
-            onSuccess: (res) => {
+            onSuccess: () => {
                 toast.success("Welcome back!");
                 navigate('/dashboard');
             },
@@ -38,7 +38,9 @@ export default function Login() {
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
+        // Ensure VITE_API_BASE_URL points to your backend /api
+        const backendBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+        window.location.href = `${backendBase}/auth/google`;
     };
 
     const inputStyle = "bg-[#111111] border-[#222222] text-white focus:border-[#B08B57] focus:ring-1 focus:ring-[#B08B57]";
@@ -51,6 +53,7 @@ export default function Login() {
                     label="Email Address"
                     type="email"
                     placeholder="name@srgroup.com"
+                    autoComplete="email"
                     error={errors.email?.message}
                     {...register("email")}
                     className={inputStyle}
@@ -61,6 +64,7 @@ export default function Login() {
                         label="Password"
                         type="password"
                         placeholder="••••••••"
+                        autoComplete="current-password"
                         error={errors.password?.message}
                         {...register("password")}
                         className={inputStyle}
@@ -72,8 +76,13 @@ export default function Login() {
                     </div>
                 </div>
 
-                <Button type="submit" disabled={isSubmitting} className="w-full py-4 bg-[#B08B57] hover:bg-[#9a784d] text-white">
-                    {isSubmitting ? "Processing..." : "Sign In"} <LogIn size={14} className="ml-2" />
+                <Button 
+                    type="submit" 
+                    disabled={loginUser.isPending || isSubmitting} 
+                    className="w-full py-4 bg-[#B08B57] hover:bg-[#9a784d] text-white transition-all"
+                >
+                    {loginUser.isPending ? "Processing..." : "Sign In"} 
+                    <LogIn size={14} className="ml-2" />
                 </Button>
 
                 <div className="relative flex items-center py-2">

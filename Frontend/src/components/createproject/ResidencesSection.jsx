@@ -28,21 +28,23 @@ export default function ResidencesSection({ onNext, onPrev }) {
 
     const { fields, append, remove } = useFieldArray({ control, name: "units" });
 
-    // MOBILE-FRIENDLY FILE HANDLER
-    const handleFileChange = async (index, e) => {
+    // FIXED: Removed async/await and setTimeout to prevent race conditions.
+    // This now updates state and validates synchronously.
+    const handleFileChange = (index, e) => {
         const files = Array.from(e.target.files || []);
         
-        // 1. Update form value immediately
-        setValue(`units.${index}.images`, files, {
-            shouldValidate: true,
-            shouldDirty: true,
-            shouldTouch: true
-        });
+        setValue(
+            `units.${index}.images`,
+            [...files],
+            {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true
+            }
+        );
 
-        // 2. Delay trigger for Mobile Browsers to ensure state is ready
-        setTimeout(async () => {
-            await trigger(`units.${index}.images`);
-        }, 100);
+        // Trigger validation immediately after value is set
+        trigger(`units.${index}.images`);
     };
 
     const onSubmit = (data) => {
@@ -50,10 +52,16 @@ export default function ResidencesSection({ onNext, onPrev }) {
         onNext();
     };
 
+    // FIXED: Added onInvalid handler to help you debug why the button "blocks"
+    const onInvalid = (errors) => {
+        console.error("Form validation failed:", errors);
+        alert("Please fix the errors in the form before continuing.");
+    };
+
     const inputClasses = "bg-[#0a0a0a] border-[#B08B57]/20 focus:border-[#B08B57] text-white placeholder:text-gray-600 rounded-none w-full";
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
+        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-8 w-full">
             <h2 className="text-lg font-light text-white uppercase tracking-widest">Available Residences</h2>
 
             {/* Video Input */}

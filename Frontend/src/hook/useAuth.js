@@ -4,6 +4,7 @@ import apiClient from '../api/apiClient';
 export const useAuth = () => {
     const queryClient = useQueryClient();
 
+    // 1. User Query - Cached & Optimized
     const { data: user, isLoading, isError } = useQuery({
         queryKey: ['authUser'],
         queryFn: async () => {
@@ -20,47 +21,32 @@ export const useAuth = () => {
         refetchOnWindowFocus: false,
     });
 
-    const logout = async () => {
-        try {
-            
-            await apiClient.post('/auth/logout');
-        } catch (err) {
-            console.error("Logout API failed", err);
-        } finally {
-            
+
+    // 2. Logout - Mutation Pattern (Cleaner)
+    const logout = useMutation({
+        mutationFn: () => apiClient.post('/auth/logout'),
+        onSettled: () => {
+            queryClient.setQueryData(['authUser'], null);
             queryClient.clear();
-            sessionStorage.clear();
             localStorage.clear();
-            
-            // 3. Force Hard Reload to landing page
-            window.location.href = '/'; 
+            sessionStorage.clear();
+            window.location.replace('/'); // Clean redirection
         }
-    };
+    });
 
+    // 3. Login - Optimized with Cache Invalidation
     const loginUser = useMutation({
-        mutationFn: async (credentials) => {
-            const { data } = await apiClient.post('/auth/login', credentials);
-            return data;
-        },
+        mutationFn: (credentials) => apiClient.post('/auth/login', credentials).then(res => res.data),
         onSuccess: (data) => {
-            const loggedInUser = data.user || data;
-            queryClient.setQueryData(['authUser'], loggedInUser);
+            queryClient.setQueryData(['authUser'], data);
             queryClient.invalidateQueries({ queryKey: ['authUser'] });
         }
     });
 
-    const updateProfile = useMutation({
-        mutationFn: async (payload) => {
-            const { data } = await apiClient.patch('/auth/update-profile', payload);
-            return data;
-        },
-        onSuccess: (response) => {
-            const updatedUser = response.user || response;
-            queryClient.setQueryData(['authUser'], updatedUser);
-            queryClient.invalidateQueries({ queryKey: ['authUser'] });
-        }
-    });
-
+    // 4. Registration
+    // const registerUser = useMutation({
+    //     mutationFn: (userData) => apiClient.post('/auth/register', userData).then(res => res.data)
+    // });
     const registerUser = useMutation({
         mutationFn: async (userData) => {
             const { data } = await apiClient.post('/auth/register', userData);
@@ -68,18 +54,16 @@ export const useAuth = () => {
         }
     });
 
+
+
+    // 6. Reset Password
     const resetPassword = useMutation({
-        mutationFn: async (userData) => {
-            const { data } = await apiClient.post('/auth/reset-password', userData);
-            return data;
-        }
+        mutationFn: (userData) => apiClient.post('/auth/reset-password', userData).then(res => res.data)
     });
 
+    // 7. Verify ERP/Code
     const verifyErp = useMutation({
-        mutationFn: async (payload) => {
-            const { data } = await apiClient.post('/auth/verify-erp', payload);
-            return data;
-        }
+        mutationFn: (payload) => apiClient.post('/auth/verify-admincode', payload).then(res => res.data)
     });
 
     return { 
@@ -91,6 +75,5 @@ export const useAuth = () => {
         logout, 
         verifyErp, 
         resetPassword, 
-        updateProfile 
     };
 };

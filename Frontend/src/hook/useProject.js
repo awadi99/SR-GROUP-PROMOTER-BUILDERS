@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../api/apiClient';
 
+/**
+ * Custom hook to handle project data lifecycle.
+ * Handles fetching list of projects, fetching a single project, and creating new ones.
+ */
 export const useProject = () => {
     const queryClient = useQueryClient();
 
@@ -8,27 +12,27 @@ export const useProject = () => {
     const { 
         data: myProjects, 
         isLoading: isFetchingProjects, 
-        isError: isProjectsError 
+        isError: isProjectsError,
+        refetch
     } = useQuery({
         queryKey: ['myProjects'],
         queryFn: async () => {
-            // Corrected to match your backend mount path: /api/project
             const { data } = await apiClient.get('/project/my-projects');
-            return data;
+            return data?.data || [];
         },
-        staleTime: 1000 * 60 * 5, 
+        staleTime: 1000 * 60 * 5,
         refetchOnWindowFocus: false,
     });
 
     // 2. Create Project Mutation
     const mutation = useMutation({
         mutationFn: async (formData) => {
-            // Corrected to match your backend mount path: /api/project
-            const { data } = await apiClient.post('/project/create', formData);
+            const { data } = await apiClient.post('/project/create', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
             return data;
         },
         onSuccess: () => {
-            // Automatically refetch the projects list after a successful creation
             queryClient.invalidateQueries({ queryKey: ['myProjects'] });
         }
     });
@@ -37,9 +41,25 @@ export const useProject = () => {
         myProjects,
         isFetchingProjects,
         isProjectsError,
+        refetchProjects: refetch,
         createProject: mutation.mutate,
         isCreating: mutation.isPending, 
         createError: mutation.error,
         isCreateSuccess: mutation.isSuccess
     };
+};
+
+/**
+ * Hook to fetch a single project by ID for the detail view
+ */
+export const useProjectById = (id) => {
+    return useQuery({
+        queryKey: ['project', id],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/project/get-project/${id}`);
+            return data.data; 
+        },
+        enabled: !!id,
+        staleTime: 1000 * 60 * 10,
+    });
 };

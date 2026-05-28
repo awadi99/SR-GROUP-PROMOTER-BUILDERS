@@ -1,101 +1,81 @@
 import Project from "./project.model.js";
 
-/*
-|--------------------------------------------------------------------------
-| CREATE PROJECT SERVICE
-|--------------------------------------------------------------------------
-*/
 export const createProjectService = async (projectData, userId) => {
     const { identity, specs, vision, location, contact } = projectData;
 
-    // 1. Validate mandatory fields
-    const titleClean = identity?.title?.trim();
-    const descClean = identity?.description?.trim();
+    const sanitize = (val) => (val && typeof val === 'string' ? val.trim() : undefined);
 
-    if (!titleClean || !descClean) {
-        throw new Error("Project title and description are required.");
-    }
+    // FIX: Map features to a simple array of strings [String]
+    const normalizedFeatures = Array.isArray(vision?.features) 
+        ? vision.features.map(item => {
+            // If item is an object like { feature: "..." }, extract the string
+            if (item && typeof item === 'object' && 'feature' in item) {
+                return String(item.feature || "").trim();
+            }
+            // If it's already a string, just trim it
+            return String(item || "").trim();
+        }).filter(f => f.length > 0) // Remove empty strings
+        : [];
 
-    // 2. Handle Residences (Crucial: Force Parse if it's a string)
-    let unitsData = projectData.residences?.units || [];
-
-    // If the frontend sent a stringified array (very common with FormData), parse it
-    if (typeof unitsData === 'string') {
-        try {
-            unitsData = JSON.parse(unitsData);
-        } catch (e) {
-            console.error("Failed to parse units string:", e);
-            unitsData = [];
-        }
-    }
-
-    // Ensure it is strictly an array for Mongoose
-    const finalUnits = Array.isArray(unitsData) 
-        ? unitsData.map(unit => ({
-            type: unit?.type?.trim() || undefined,
-            area: unit?.area?.trim() || undefined,
-            price: unit?.price?.trim() || undefined,
+    const finalUnits = Array.isArray(projectData.residences?.units) 
+        ? projectData.residences.units.map(unit => ({
+            type: sanitize(unit?.type),
+            area: sanitize(unit?.area),
+            price: sanitize(unit?.price),
             images: Array.isArray(unit?.images) ? unit.images.filter(Boolean) : []
         })) 
         : [];
 
-    // 3. Build Final Payload
     const projectPayload = {
+        createdBy: userId,
         identity: { 
-            title: titleClean, 
-            tagline: identity?.tagline?.trim() || undefined, 
-            description: descClean 
+            title: identity.title.trim(), 
+            tagline: sanitize(identity.tagline), 
+            description: identity.description.trim() 
         },
         specs: specs ? { 
-            towers: Number(specs.towers) || undefined, 
-            floors: Number(specs.floors) || undefined, 
-            architect: specs.architect?.trim() || undefined, 
-            rera: specs.rera?.trim() || undefined 
+            towers: parseInt(specs.towers, 10) || undefined, 
+            floors: parseInt(specs.floors, 10) || undefined, 
+            architect: sanitize(specs.architect), 
+            rera: sanitize(specs.rera) 
         } : undefined,
         residences: projectData.residences ? { 
-            commonVideoUrl: projectData.residences.commonVideoUrl?.trim() || undefined, 
-            units: finalUnits // Explicitly set to the array
+            commonVideoUrl: sanitize(projectData.residences.commonVideoUrl), 
+            units: finalUnits
         } : undefined,
         vision: vision ? { 
-            vision: vision.vision?.trim() || undefined, 
+            vision: sanitize(vision.vision), 
             images: Array.isArray(vision.images) ? vision.images.filter(Boolean) : [], 
-            features: Array.isArray(vision.features) ? vision.features : [] 
+            features: normalizedFeatures // Now a clean array of strings: ["Pool", "Garden"]
         } : undefined,
         location: location ? { 
-            mapEmbed: location.mapEmbed?.trim() || undefined, 
+            mapEmbed: sanitize(location.mapEmbed), 
             landmarks: Array.isArray(location.landmarks) ? location.landmarks : [] 
         } : undefined,
         contact: contact ? { 
-            name: contact.name?.trim() || undefined, 
-            email: contact.email?.trim()?.toLowerCase() || undefined, 
-            phone: contact.phone?.trim() || undefined, 
-            website: contact.website?.trim() || undefined 
-        } : undefined,
-        createdBy: userId
+            salesManagerName: sanitize(contact.salesManagerName), 
+            email: contact.email?.trim().toLowerCase() || undefined, 
+            phone: sanitize(contact.phone), 
+            website: sanitize(contact.website) 
+        } : undefined
     };
 
-    // 4. Write to Database
     try {
         const createdProject = await Project.create(projectPayload);
         return { projectId: createdProject._id, title: createdProject.identity.title };
     } catch (error) {
         if (error.code === 11000) throw new Error("A project with this title already exists.");
         if (error.name === "ValidationError") {
-             const msg = Object.values(error.errors).map(e => e.message).join(", ");
-             throw new Error(msg);
+             const details = Object.values(error.errors).map(e => `${e.path}: ${e.message}`).join(", ");
+             throw new Error("Validation Error: " + details);
         }
         throw error;
     }
 };
 
-/*
-|--------------------------------------------------------------------------
-| GET MY PROJECTS SERVICE
-|--------------------------------------------------------------------------
-*/
 export const getMyProjectsService = async (userId) => {
     return await Project.find({ createdBy: userId })
-        .select({ "identity.title": 1, "identity.tagline": 1, createdAt: 1 })
+    .select("identity.title identity.tagline identity.description vision.images specs.architect createdAt")
         .sort({ createdAt: -1 })
-        .lean();
+        .lean(); 
 };

@@ -10,8 +10,7 @@ import SmoothScroll from './components/scroll/SmoothScroll';
 import NetworkErrorBoundary from './error/NetworkErrorBoundary';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
-import { useProjectStore } from './store/useProjectStore';
-import projects from './constants/ProjectData';
+import { useProject } from './hook/useProject';
 
 
 
@@ -36,7 +35,7 @@ const GoogleAuthSuccess = lazy(() => import('./pages/GoogleAuthSuccess'));
 
 
 export default function App() {
-  // const { projects } = useProjectStore();  
+  const { myProjects} = useProject();
   const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem("intro_viewed"));
 
   return (
@@ -48,18 +47,13 @@ export default function App() {
       />
 
       <SmoothScroll>
-        <ToastContainer
-          position="top-center"
-          autoClose={2000}
-          theme="dark"
-          transition={Flip}
-        />
 
         {/* 2. Main Application Layer */}
         <div className={`transition-opacity duration-1000 ${showIntro ? "opacity-0" : "opacity-100"}`}>
           <NetworkErrorBoundary>
             {/* Suspense uses your custom LoadingSpinner during lazy route transitions */}
             <Suspense fallback={<LoadingSpinner />}>
+            <ToastContainer position="top-center" autoClose={2000} theme="dark" transition={Flip} />
               <Routes>
                 <Route path='/' element={<LandingPage />} />
                 <Route path='/login' element={<Login />} />
@@ -80,9 +74,9 @@ export default function App() {
                  
 
                   <Route path="create-project" element={<CreateProject />} />
-                  <Route path='projects' element={<ProjectListing projects={projects} />} />
+                  <Route path='projects' element={<ProjectListing projects={myProjects} />} />
                   <Route path="edit-project/:id" element={<EditProjectPage />} />
-                  <Route path="delete-projects" element={<DeleteProjectPage projects ={projects} />} />
+                  <Route path="delete-projects" element={<DeleteProjectPage projects ={myProjects} />} />
                   <Route path="profile" element={<Profile/>}/>
                   <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Route>

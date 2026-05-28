@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { locationSchema } from '../../schema/projectSchema.js';
@@ -10,7 +10,13 @@ import Input from '../ui/Input';
 export default function LocationSection({ onNext, onPrev }) {
     const { sections, updateSection } = useProjectStore();
 
-    const { register, control, handleSubmit, formState: { errors } } = useForm({
+    const { 
+        register, 
+        control, 
+        handleSubmit, 
+        reset,
+        formState: { errors } 
+    } = useForm({
         resolver: zodResolver(locationSchema),
         defaultValues: {
             mapEmbed: sections.location?.mapEmbed || '',
@@ -19,6 +25,16 @@ export default function LocationSection({ onNext, onPrev }) {
     });
 
     const { fields, append, remove } = useFieldArray({ control, name: "landmarks" });
+
+    // Sync form with Zustand data on load or rehydration
+    useEffect(() => {
+        if (sections.location) {
+            reset({
+                mapEmbed: sections.location.mapEmbed || '',
+                landmarks: sections.location.landmarks?.length > 0 ? sections.location.landmarks : [{ name: '', distance: '' }]
+            });
+        }
+    }, [sections.location, reset]);
 
     const onSubmit = (data) => {
         updateSection('location', data);

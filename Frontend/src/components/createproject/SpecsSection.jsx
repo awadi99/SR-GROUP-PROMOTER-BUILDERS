@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { specsSchema } from '../../schema/projectSchema.js'; 
@@ -10,10 +10,32 @@ import Input from '../ui/Input';
 export default function SpecsSection({ onNext, onPrev }) {
     const { sections, updateSection } = useProjectStore();
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { 
+        register, 
+        handleSubmit, 
+        formState: { errors },
+        reset 
+    } = useForm({
         resolver: zodResolver(specsSchema),
-        defaultValues: sections.specs
+        defaultValues: {
+            towers: sections.specs?.towers || '',
+            floors: sections.specs?.floors || '',
+            architect: sections.specs?.architect || '',
+            rera: sections.specs?.rera || ''
+        }
     });
+
+    // Sync form with Zustand data on load or rehydration
+    useEffect(() => {
+        if (sections.specs) {
+            reset({
+                towers: sections.specs.towers || '',
+                floors: sections.specs.floors || '',
+                architect: sections.specs.architect || '',
+                rera: sections.specs.rera || ''
+            });
+        }
+    }, [sections.specs, reset]);
 
     const onSubmit = (data) => {
         updateSection('specs', data);

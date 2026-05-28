@@ -1,8 +1,13 @@
-// src/components/allproject/MapAndContactSection.jsx
 import React from "react";
-import { ArrowUpRight, Phone, Mail, Download } from "lucide-react";
+import { ArrowUpRight, Phone, Mail } from "lucide-react";
 
 export default function MapAndContactSection({ project }) {
+    // console.log(project)
+// console.log(project?.location?.mapEmbed)
+console.log(project?.location?.mapEmbed)
+    // Guard clause to prevent rendering if project data is missing
+    if (!project) return null;
+
     return (
         <>
             {/* ================= MAP LAYOUT LAYER - DARK THEME ================= */}
@@ -21,22 +26,25 @@ export default function MapAndContactSection({ project }) {
                     <div className="rounded-[24px] overflow-hidden bg-[#1A1A1A] h-[350px] sm:h-[450px] transform-gpu border border-[#A68966]/10">
                         <iframe
                             title="Project Location Mapping"
-                            src={project.mapEmbed}
-                            className="w-full h-full border-0 opacity-80 hover:opacity-100 transition-opacity"
+                            src={project.location?.mapEmbed}
+                            className="w-full h-full border-0"
                             loading="lazy"
                             allowFullScreen
+                            referrerPolicy="no-referrer-when-downgrade"
                         />
+     
                     </div>
 
                     <div className="space-y-4 sm:space-y-5">
-                        {project.landmarks.map((item, i) => (
-                            <div key={i} className="bg-[#121212] rounded-[22px] border border-[#A68966]/10 px-5 sm:px-6 py-5 flex justify-between items-center gap-4 transition-all duration-300 hover:border-[#A68966]/40">
+                        {/* Correctly accessing landmarks array from your MongoDB structure */}
+                        {project.location?.landmarks?.map((item, i) => (
+                            <div key={item._id?.$oid || i} className="bg-[#121212] rounded-[22px] border border-[#A68966]/10 px-5 sm:px-6 py-5 flex justify-between items-center gap-4 transition-all duration-300 hover:border-[#A68966]/40">
                                 <div>
-                                    <h3 className="text-lg sm:text-xl font-medium text-white mb-1">{item.name}</h3>
+                                    <h3 className="text-lg sm:text-xl font-medium text-white mb-1">{item.name || "N/A"}</h3>
                                     <p className="text-[#666666] text-sm font-light">Premium Connectivity</p>
                                 </div>
                                 <div className="bg-[#1A1A1A] rounded-full px-4 sm:px-5 py-2 text-xs sm:text-sm font-medium text-[#A68966] whitespace-nowrap border border-[#A68966]/20">
-                                    {item.distance}
+                                    {item.distance ? `${item.distance} km` : "N/A"}
                                 </div>
                             </div>
                         ))}
@@ -65,7 +73,7 @@ export default function MapAndContactSection({ project }) {
                             </div>
                             <div>
                                 <p className="text-[#666666] text-sm mb-1 font-light">Phone</p>
-                                <h3 className="text-lg sm:text-2xl font-medium text-white break-all tracking-tight">{project.contact.phone}</h3>
+                                <h3 className="text-lg sm:text-2xl font-medium text-white break-all tracking-tight">{project.contact?.phone || "N/A"}</h3>
                             </div>
                         </div>
 
@@ -75,16 +83,16 @@ export default function MapAndContactSection({ project }) {
                             </div>
                             <div>
                                 <p className="text-[#666666] text-sm mb-1 font-light">Email</p>
-                                <h3 className="text-base sm:text-xl font-medium text-white break-all tracking-tight">{project.contact.email}</h3>
+                                <h3 className="text-base sm:text-xl font-medium text-white break-all tracking-tight">{project.contact?.email || "N/A"}</h3>
                             </div>
                         </div>
 
                         <div className="bg-[#121212] rounded-[22px] border border-[#A68966]/10 p-5 sm:p-6">
-                            <p className="text-[#666666] text-sm mb-2 font-light">Address</p>
-                            <h3 className="text-base sm:text-lg leading-7 sm:leading-8 font-medium text-white">{project.contact.address}</h3>
+                            <p className="text-[#666666] text-sm mb-2 font-light">Sales Manager</p>
+                            <h3 className="text-base sm:text-lg leading-7 sm:leading-8 font-medium text-white capitalize">
+                                {project.contact?.salesManagerName || "N/A"}
+                            </h3>
                         </div>
-
-
                     </div>
                 </div>
             </div>

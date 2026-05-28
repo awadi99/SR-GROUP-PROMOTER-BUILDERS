@@ -1,21 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { residencesSchema } from '../../schema/projectSchema.js';
 import { useProjectStore } from '../../store/useProjectStore.js';
+import { compressImage } from '../../utils/imageUtils.js';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 
-export default function ResidencesSection({ onNext, onPrev }) {
+export default function ResidencesSection({ onNext, onPrev, filesRef }) {
     const { sections, updateSection } = useProjectStore();
+    const [isCompressing, setIsCompressing] = useState(false);
 
     const {
         register,
         control,
         handleSubmit,
-        setValue,
-        trigger,
-        formState: { errors, isSubmitting }
+        reset,
+        formState: { isSubmitting }
     } = useForm({
         resolver: zodResolver(residencesSchema),
         defaultValues: {
@@ -28,54 +29,80 @@ export default function ResidencesSection({ onNext, onPrev }) {
 
     const { fields, append, remove } = useFieldArray({ control, name: "units" });
 
-    // FIXED: Removed async/await and setTimeout to prevent race conditions.
-    // This now updates state and validates synchronously.
-    const handleFileChange = (index, e) => {
-        const files = Array.from(e.target.files || []);
-        
-        setValue(
-            `units.${index}.images`,
-            [...files],
-            {
-                shouldValidate: true,
-                shouldDirty: true,
-                shouldTouch: true
-            }
-        );
+    useEffect(() => {
+        if (sections.residences) {
+            reset({
+                commonVideoUrl: sections.residences.commonVideoUrl || '',
+                units: sections.residences.units?.length > 0
+                    ? sections.residences.units
+                    : [{ type: '', area: '', price: '', images: [] }]
+            });
+        }
+    }, [sections.residences, reset]);
 
-        // Trigger validation immediately after value is set
-        trigger(`units.${index}.images`);
+    const handleFileChange = async (index, e) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+
+        setIsCompressing(true);
+        try {
+            const compressedFiles = await Promise.all(
+                files.map((file) => compressImage(file))
+            );
+            
+            // Save files directly to the parent's Ref
+            // This bypasses the form state and Zustand, preventing serialization errors
+            filesRef.current.unitImages[index] = compressedFiles;
+        } catch (error) {
+            console.error("Error processing images:", error);
+        } finally {
+            setIsCompressing(false);
+        }
     };
 
     const onSubmit = (data) => {
-        updateSection('residences', data);
-        onNext();
-    };
+        // Validation: Check that we have files in our Ref for every unit
+        const hasInvalidImages = data.units.some((_, index) => 
+            !filesRef.current.unitImages[index] || filesRef.current.unitImages[index].length !== 4
+        );
+        
+        if (hasInvalidImages) {
+            alert("Each unit must have exactly 4 images uploaded.");
+            return;
+        }
 
-    // FIXED: Added onInvalid handler to help you debug why the button "blocks"
-    const onInvalid = (errors) => {
-        console.error("Form validation failed:", errors);
-        alert("Please fix the errors in the form before continuing.");
+        // Save only text/metadata to Zustand
+        updateSection('residences', {
+            commonVideoUrl: data.commonVideoUrl,
+            units: data.units.map(unit => ({
+                type: unit.type,
+                area: unit.area,
+                price: unit.price
+            }))
+        });
+        
+        onNext();
     };
 
     const inputClasses = "bg-[#0a0a0a] border-[#B08B57]/20 focus:border-[#B08B57] text-white placeholder:text-gray-600 rounded-none w-full";
 
     return (
-        <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-8 w-full">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full">
             <h2 className="text-lg font-light text-white uppercase tracking-widest">Available Residences</h2>
 
-            {/* Video Input */}
             <div className="p-4 border border-[#B08B57]/20 bg-[#0a0a0a]">
                 <Input {...register("commonVideoUrl")} label="Project Video Tour Link (Common)" className={inputClasses} />
             </div>
 
-            {/* Units List */}
             <div className="space-y-6">
                 {fields.map((field, index) => (
                     <div key={field.id} className="p-4 border border-[#B08B57]/20 bg-[#0a0a0a]/50 relative">
                         <button 
                             type="button" 
-                            onClick={() => remove(index)} 
+                            onClick={() => {
+                                remove(index);
+                                delete filesRef.current.unitImages[index]; // Clean up ref
+                            }} 
                             className="absolute top-2 right-2 text-[9px] text-[#B08B57] border border-[#B08B57] px-2 py-1 uppercase hover:bg-[#B08B57] hover:text-black transition-colors"
                         >
                             Remove
@@ -89,20 +116,16 @@ export default function ResidencesSection({ onNext, onPrev }) {
 
                         <div className="space-y-1">
                             <label className="text-[9px] uppercase tracking-[0.2em] text-[#B08B57] font-bold">
-                                Upload 4 Images (Required)
+                                {isCompressing ? "Compressing Images..." : "Upload 4 Images (Required)"}
                             </label>
                             <input
                                 type="file"
                                 multiple
                                 accept="image/*"
+                                disabled={isCompressing}
                                 onChange={(e) => handleFileChange(index, e)}
-                                className="w-full bg-[#1a1a1a] border border-[#B08B57]/20 p-2 text-white text-[10px] cursor-pointer"
+                                className="w-full bg-[#1a1a1a] border border-[#B08B57]/20 p-2 text-white text-[10px] cursor-pointer disabled:opacity-50"
                             />
-                            {errors.units?.[index]?.images && (
-                                <p className="text-[9px] text-red-500 uppercase mt-1">
-                                    {errors.units[index].images.message}
-                                </p>
-                            )}
                         </div>
                     </div>
                 ))}
@@ -111,20 +134,20 @@ export default function ResidencesSection({ onNext, onPrev }) {
             <Button
                 type="button"
                 onClick={() => append({ type: '', area: '', price: '', images: [] })}
-                className="w-full py-4 border border-dashed border-[#B08B57] text-[#B08B57] text-[10px] uppercase hover:bg-[#B08B57]/10"
+                disabled={isCompressing}
+                className="w-full py-4 border border-dashed border-[#B08B57] text-[#B08B57] text-[10px] uppercase hover:bg-[#B08B57]/10 disabled:opacity-50"
             >
                 + Add New Unit
             </Button>
 
-            {/* Navigation Buttons */}
             <div className="flex gap-4 pt-4">
                 <Button type="button" onClick={onPrev} className="flex-1 py-3 border border-[#333] text-gray-400">Back</Button>
                 <Button 
                     type="submit" 
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isCompressing}
                     className="flex-1 py-3 border border-[#B08B57] text-[#B08B57] disabled:opacity-50"
                 >
-                    Save & Continue
+                    {isCompressing ? "Compressing..." : "Save & Continue"}
                 </Button>
             </div>
         </form>

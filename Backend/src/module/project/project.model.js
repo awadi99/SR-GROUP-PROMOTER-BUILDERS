@@ -1,66 +1,67 @@
 import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema({
-    // Identity & Metadata
     identity: {
-        title: { type: String, required: true, index: true },
-        tagline: { type: String },
-        description: { type: String, required: true }
-    },
-    
-    // Specifications
-    specs: {
-        towers: Number,
-        floors: Number,
-        architect: String,
-        rera: String
+        // Changed to unique: true for database-level protection
+        title: { type: String, required: true, trim: true, index: true, unique: true },
+        tagline: { type: String, trim: true },
+        description: { type: String, required: true, trim: true }
     },
 
-    // Residences (Stored as an array of sub-documents for query efficiency)
+    specs: {
+        towers: { type: Number, default: 0 },
+        floors: { type: Number, default: 0 },
+        architect: { type: String, trim: true },
+        rera: { type: String, trim: true }
+    },
+
     residences: {
-        commonVideoUrl: String,
+        commonVideoUrl: { type: String, trim: true },
         units: [{
-            type: String,
-            area: String,
-            price: String,
-            images: [String] // Store Cloudinary URLs, NOT binary data
+            type: { type: String, required: true, trim: true },
+            area: { type: String, required: true, trim: true },
+            price: { type: String, required: true, trim: true },
+            images: { type: [String], default: [] }
         }]
     },
 
-    // Architectural Vision
     vision: {
-        vision: String,
-        images: [String],
-        features: [{ feature: String }]
+        vision: { type: String, trim: true },
+        images: { type: [String], default: [] },
+        // Simplified features to a simple string array for performance
+        features: { type: [String], default: [] }
     },
 
-    // Location
     location: {
-        mapEmbed: String,
-        landmarks: [{ name: String, distance: String }]
+        mapEmbed: { type: String, trim: true },
+        landmarks: [{ 
+            name: { type: String, trim: true }, 
+            distance: { type: String, trim: true } 
+        }]
     },
 
-    // Contact
     contact: {
-        name: String,
-        email: { type: String, lowercase: true },
-        phone: String,
-        website: String
+        email: { type: String, lowercase: true, trim: true },
+        phone: { type: String, trim: true },
+        address: { type: String, trim: true },
+        salesManagerName: { type: String, trim: true }
     },
 
-    // Tracking & Relations
     createdBy: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
         required: true, 
-        index: true // Crucial for "My Projects" speed
+        index: true 
     }
 }, { 
     timestamps: true, 
-    minimize: true // Removes empty objects to save space
+    minimize: true 
 });
 
-// Compound index for search optimization
-projectSchema.index({ "identity.title": "text" });
+// Compound Indexing for deep search: 
+// This index helps when searching by title OR within the identity fields
+projectSchema.index({ "identity.title": "text", "identity.description": "text" });
 
-export default mongoose.model("Project", projectSchema);
+const Project = mongoose.model("Project", projectSchema);
+
+export default Project;

@@ -4,32 +4,32 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import passport from 'passport';
+import rateLimit from 'express-rate-limit'; // 🆕 Recommended for production
 
 import authRoutes from "./module/auth/auth.router.js";
 import projectRoutes from './module/project/project.router.js';
-// Commented out until you are ready to connect these
-// import userRoutes from './module/user/user.router.js';
-// import testRoutes from './module/test/test.router.js';
 import "./module/auth/google.strategy.js";
 
 const app = express();
 
-// 1. 🎯 Render & Proxy Management (Must for HTTPS/Load Balancer)
+// 1. Trust Proxy
 app.set("trust proxy", 1); 
 
-// 2. 🚀 Speed Optimization
+// 2. Security & Rate Limiting
+app.use(helmet({ crossOriginOpenerPolicy: false }));
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per window
+    message: "Too many requests from this IP, please try again later."
+});
+app.use("/api/", limiter); // Apply to all API routes
+
+// 3. Performance
 app.use(compression()); 
 
-// 3. 🛡️ Security Headers
-app.use(helmet({
-    crossOriginOpenerPolicy: false, // Google OAuth ke liye zaroori hai
-}));
-
-// 4. 🎯 CORS Configuration (Future-Proofed for Render/Vercel)
-const allowedOrigins = [
-    'http://localhost:5173' 
-];
-
+// 4. CORS
+const allowedOrigins = ['http://localhost:5173'];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
@@ -40,28 +40,35 @@ app.use(cors({
     },
     credentials: true, 
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin']
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// 5. Body Parsing (Standard)
-app.use(express.json({
-    limit: "50mb"
-}));
-
-app.use(express.urlencoded({
-    extended: true,
-    limit: "50mb"
-}));
-
-// 6. Auth Middleware
+// 5. Parsers
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
+
+// 6. Auth
 app.use(passport.initialize());
 
 // 7. Routes
-app.get("/", (req, res) => res.send("SRGroup API is live "));
+app.get("/", (req, res) => res.send("SRGroup API is live"));
 app.get("/ping", (req, res) => res.status(200).send("pong"));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/project",projectRoutes)
+app.use("/api/project", projectRoutes);
+
+// 8. 🛡️ Centralized Error Handler (The Catch-All)
+// Place this AFTER all your routes
+app.use((err, req, res, next) => {
+    console.error("❌ API Error:", err.stack);
+    
+    res.status(err.status || 500).json({
+        success: false,
+        message: err.message || "Internal Server Error",
+        // Only show stack trace in development
+        stack: process.env.NODE_ENV === 'development' ? err.stack : {} 
+    });
+});
 
 export default app;

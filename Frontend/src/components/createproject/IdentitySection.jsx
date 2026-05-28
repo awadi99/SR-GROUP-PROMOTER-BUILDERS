@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { identitySchema } from '../../schema/projectSchema.js'; 
@@ -10,10 +10,30 @@ import Input from '../ui/Input';
 export default function IdentitySection({ onNext }) {
     const { sections, updateSection } = useProjectStore();
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { 
+        register, 
+        handleSubmit, 
+        formState: { errors },
+        reset
+    } = useForm({
         resolver: zodResolver(identitySchema),
-        defaultValues: sections.identity 
+        defaultValues: {
+            title: sections.identity?.title || '',
+            tagline: sections.identity?.tagline || '',
+            description: sections.identity?.description || ''
+        }
     });
+
+    // Sync form with Zustand data on load or rehydration
+    useEffect(() => {
+        if (sections.identity) {
+            reset({
+                title: sections.identity.title || '',
+                tagline: sections.identity.tagline || '',
+                description: sections.identity.description || ''
+            });
+        }
+    }, [sections.identity, reset]);
 
     const onSubmit = (data) => {
         updateSection('identity', data); 

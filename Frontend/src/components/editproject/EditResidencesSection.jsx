@@ -1,25 +1,58 @@
-import React from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { useProjectStore } from '../../store/useProjectStore';
+import React, { useEffect } from 'react';
+import { useForm, useFieldArray, useWatch } from 'react-hook-form';
+import { Trash2, Plus } from 'lucide-react';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
-import { X, Trash2, Plus } from 'lucide-react';
+import VideoPreview from './VideoPreview';
+import ImageGallery from './ImageGallery';
+import { useProjectStore } from '../../store/useProjectStore';
 
 export default function EditResidencesSection({ onNext, onPrev }) {
+    // 1. Access the store
     const { sections, updateSection } = useProjectStore();
-    const { residences } = sections;
 
-    const { register, control, handleSubmit } = useForm({
-        defaultValues: {
-            commonVideoUrl: residences.commonVideoUrl || '',
-            units: residences.units || []
+    // 2. Initialize Form
+    const { register, control, handleSubmit, reset } = useForm({
+        defaultValues: { 
+            commonVideoUrl: sections.residences?.commonVideoUrl || '', 
+            units: (sections.residences?.units || []).map(unit => ({
+                ...unit,
+                imageUrls: unit.images || []
+            }))
         }
     });
 
+    const watchedVideoUrl = useWatch({ control, name: "commonVideoUrl" });
     const { fields, append, remove } = useFieldArray({ control, name: "units" });
 
+    // 3. SYNC: Map Store Data -> Frontend State
+    useEffect(() => {
+        if (sections.residences) {
+            reset({
+                commonVideoUrl: sections.residences.commonVideoUrl || '',
+                units: (sections.residences.units || []).map(unit => ({
+                    ...unit,
+                    imageUrls: unit.images || []
+                }))
+            });
+        }
+    }, [sections.residences, reset]);
+
+    // 4. SUBMIT: Save to Store (No API call here)
     const onSubmit = (data) => {
-        updateSection('residences', data);
+        // Transform: Frontend 'imageUrls' -> Store 'images'
+        const payloadUnits = data.units.map(unit => ({
+            ...unit,
+            images: unit.imageUrls || [] 
+        }));
+
+        // Save only this section to the Zustand store
+        updateSection('residences', {
+            commonVideoUrl: data.commonVideoUrl,
+            units: payloadUnits
+        });
+
+        // Move to the next step
         onNext();
     };
 
@@ -31,15 +64,29 @@ export default function EditResidencesSection({ onNext, onPrev }) {
                 <div className="h-[2px] w-12 bg-[#B08B57] mt-3"></div>
             </div>
 
-            <Input label="Project Video Tour (Embed URL)" {...register("commonVideoUrl")} className="bg-[#050505]" />
+            {/* Video Preview */}
+            <div className="space-y-4">
+                <Input 
+                    label="Project Video Tour (Embed URL)" 
+                    {...register("commonVideoUrl")} 
+                    className="bg-[#050505]" 
+                />
+                <VideoPreview url={watchedVideoUrl || sections.residences?.commonVideoUrl} />
+            </div>
 
-            {/* Units List */}
+            {/* Residential Units List */}
             <div className="space-y-6">
+                <label className="text-[10px] uppercase text-[#555] tracking-widest block">Existing Residential Units</label>
+                
                 {fields.map((field, index) => (
                     <div key={field.id} className="p-4 sm:p-6 border border-[#1a1a1a] bg-[#050505] space-y-6 animate-in zoom-in-95 duration-300">
                         <div className="flex justify-between items-start">
                             <h3 className="text-[10px] uppercase text-[#B08B57] tracking-widest font-bold">Unit {index + 1}</h3>
-                            <button type="button" onClick={() => remove(index)} className="text-[#555] hover:text-red-500 transition-colors">
+                            <button 
+                                type="button" 
+                                onClick={() => remove(index)} 
+                                className="text-[#555] hover:text-red-500 transition-colors"
+                            >
                                 <Trash2 size={16} />
                             </button>
                         </div>
@@ -50,23 +97,13 @@ export default function EditResidencesSection({ onNext, onPrev }) {
                             <Input label="Price" {...register(`units.${index}.price`)} className="bg-[#0a0a0a]" />
                         </div>
 
-                        {field.imageUrls?.length > 0 && (
-                            <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                                {field.imageUrls.map((url, i) => (
-                                    <div key={i} className="relative aspect-square overflow-hidden border border-[#1a1a1a]">
-                                        <img src={url} className="w-full h-full object-cover" alt="Unit" />
-                                        <button type="button" className="absolute top-0 right-0 bg-black/70 text-white p-0.5 hover:bg-red-600">
-                                            <X size={10} />
-                                        </button>
-                                    </div>
-                                ))}
+                        {/* Rendering: Using mapped imageUrls */}
+                        {field.imageUrls && field.imageUrls.length > 0 && (
+                            <div className="mt-4">
+                                <label className="text-[9px] text-[#555] uppercase">Existing Photos</label>
+                                <ImageGallery images={field.imageUrls} />
                             </div>
                         )}
-
-                        <div>
-                            <label className="block text-[9px] uppercase text-[#555] mb-2">Upload Images</label>
-                            <input type="file" multiple className="text-[10px] text-[#555] w-full p-2 border border-[#1a1a1a] bg-[#0a0a0a]" />
-                        </div>
                     </div>
                 ))}
             </div>
@@ -74,15 +111,26 @@ export default function EditResidencesSection({ onNext, onPrev }) {
             <Button
                 type="button"
                 onClick={() => append({ type: '', area: '', price: '', imageUrls: [] })}
-                className="w-full sm:w-auto flex items-center justify-center bg-[#1a1a1a] hover:bg-[#252525] transition-all"
+                className="w-full sm:w-auto flex items-center justify-center bg-[#1a1a1a] hover:bg-[#252525] transition-all text-white uppercase text-[10px] tracking-widest py-3 px-6"
             >
                 <Plus size={16} className="mr-2" />Add New Unit
             </Button>
 
-            {/* Responsive Actions */}
+            {/* Action Buttons */}
             <div className="flex flex-col-reverse sm:flex-row gap-4 border-t border-[#1a1a1a] pt-8">
-                <Button type="button" onClick={onPrev} className="w-full sm:w-auto border border-[#1a1a1a] bg-transparent hover:bg-[#1a1a1a]">Back</Button>
-                <Button type="submit" className="w-full sm:flex-1 bg-[#B08B57] text-black font-bold uppercase tracking-widest text-[12px]  transition-colors">Update & Continue</Button>
+                <Button 
+                    type="button" 
+                    onClick={onPrev} 
+                    className="w-full sm:w-auto border border-[#1a1a1a] bg-transparent hover:bg-[#1a1a1a] text-white px-8 py-3"
+                >
+                    Back
+                </Button>
+                <Button 
+                    type="submit" 
+                    className="w-full sm:flex-1 bg-[#B08B57] text-black font-bold uppercase text-[12px] px-8 py-3"
+                >
+                    Update & Continue
+                </Button>
             </div>
         </form>
     );

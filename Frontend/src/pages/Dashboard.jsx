@@ -14,9 +14,9 @@ export default function DashboardLayout() {
                             <Briefcase size={28} />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-white tracking-tight">SR Group Portal</h1>
-                            <p className="text-[10px] font-bold text-[#555] uppercase tracking-[0.2em] mt-1">
-                                Executive Operations
+                            <h1 className="text-2xl font-bold text-white tracking-tight uppercase">SR Group Promoter & Builders</h1>
+                            <p className="text-[10px] font-bold text-[#B08B57]  uppercase tracking-[0.2em] mt-1">
+                                Executive Operations 
                             </p>
                         </div>
                     </div>

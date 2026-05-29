@@ -27,9 +27,9 @@ export default function Login() {
 
     const onSubmit = (data) => {
         loginUser.mutate(data, {
-            onSuccess: () => {
-                toast.success("Welcome back!");
+            onSuccess: (res) => {
                 navigate('/dashboard');
+                toast.success(res.message || "Welcome back!");
             },
             onError: (err) => {
                 toast.error(err.response?.data?.message || "Invalid credentials");
@@ -41,6 +41,7 @@ export default function Login() {
         // Ensure VITE_API_BASE_URL points to your backend /api
         const backendBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
         window.location.href = `${backendBase}/auth/google`;
+
     };
 
     const inputStyle = "bg-[#111111] border-[#222222] text-white focus:border-[#B08B57] focus:ring-1 focus:ring-[#B08B57]";

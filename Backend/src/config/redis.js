@@ -3,35 +3,55 @@ import { authorizedUsers } from '../constants/authInfo.js';
 
 const redisClient = createClient({
     username: 'default',
-    password: process.env.REDIS_PASSWORD || 'ar6glYnjKDbbJKmOuQjIiswp6i4cNRf3',
+    password: process.env.REDIS_PASSWORD, // Use environment variables!
     socket: {
         host: 'tub-name-cheese-17535.db.redis.io',
         port: 13282,
-        // TLS false rakhna zaroori hai kyunki aapka tested code isi pe kaam kar raha hai
-        tls: false 
+        tls: false,
+        // The magic happens here:
+        reconnectStrategy: (retries) => {
+            // Stop retrying after 20 attempts
+            if (retries > 20) {
+                return new Error('Redis connection retries exhausted');
+            }
+            // Exponential backoff: retry after 50ms, 100ms, 150ms... up to 2 seconds
+            return Math.min(retries * 50, 2000);
+        }
     }
 });
 
-redisClient.on('error', err => console.error('Redis Client Error:', err));
+// 1. Critical: Catch errors so the server doesn't crash on connection loss
+redisClient.on('error', (err) => {
+    console.error(' Redis Error:', err.message);
+});
 
-export const connectRedis = async () => {
-    try {
-        if (!redisClient.isOpen) {
-            await redisClient.connect();
-        }
-        console.log("✅ Connected to Redis successfully");
-
-        // Auth data load logic
-        if (authorizedUsers && authorizedUsers.length > 0) {
+// 2. This runs EVERY time Redis connects or reconnects
+redisClient.on('ready', async () => {
+    console.log(' Redis is connected and ready');
+    
+    // Sync auth data whenever we (re)connect
+    if (authorizedUsers && authorizedUsers.length > 0) {
+        try {
             const multi = redisClient.multi();
             for (const user of authorizedUsers) {
                 multi.set(`auth:${user.adminCode}`, user.role);
             }
             await multi.exec();
-            console.log(`🚀 ${authorizedUsers.length} Auth records loaded into Redis`);
+            console.log(` ${authorizedUsers.length} Auth records synced to Redis`);
+        } catch (err) {
+            console.error(" Failed to sync Auth data:", err);
+        }
+    }
+});
+
+// 3. Keep the initial connect function
+export const connectRedis = async () => {
+    try {
+        if (!redisClient.isOpen) {
+            await redisClient.connect();
         }
     } catch (err) {
-        console.error("❌ Redis connection failed:", err.message);
+        console.error(" Redis initial connection failed:", err.message);
     }
 };
 

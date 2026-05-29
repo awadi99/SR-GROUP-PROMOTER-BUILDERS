@@ -6,6 +6,7 @@ import { useProjectStore } from '../../store/useProjectStore.js';
 import { compressImage } from '../../utils/imageUtils.js';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
+import { toast } from 'react-toastify';
 
 export default function VisionSection({ onNext, onPrev, filesRef }) {
     const { sections, updateSection } = useProjectStore();
@@ -57,7 +58,7 @@ export default function VisionSection({ onNext, onPrev, filesRef }) {
     const onSubmit = (data) => {
         // Validation: Check Ref for files
         if (!filesRef.current.visionImages || filesRef.current.visionImages.length !== 3) {
-            alert("Please upload exactly 3 vision images.");
+            toast.error("Please upload exactly 3 vision images.");
             return;
         }
 

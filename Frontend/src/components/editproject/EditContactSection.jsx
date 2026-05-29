@@ -1,28 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useProjectStore } from '../../store/useProjectStore';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
+import { useProjectStore } from '../../store/useProjectStore';
 
 export default function EditContactSection({ onPrev }) {
-    const { sections, updateSection } = useProjectStore();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    
-    const { register, handleSubmit } = useForm({
-        defaultValues: sections.contact
+    // 1. Access the store and the final persistence method
+    const { sections, updateSection, persistProject, isSaving } = useProjectStore();
+
+    const { register, handleSubmit, reset } = useForm({
+        defaultValues: sections.contact || {}
     });
 
+    // 2. Sync form with store data
+    useEffect(() => {
+        if (sections.contact) {
+            reset(sections.contact);
+        }
+    }, [sections.contact, reset]);
+
+    // 3. Submit: Finalizes store update and pushes to Database
     const onSubmit = async (data) => {
-        setIsSubmitting(true);
-        await new Promise(resolve => setTimeout(resolve, 600)); 
+        // Update the local store one last time
         updateSection('contact', data);
-        alert("Project Updated Successfully!");
-        setIsSubmitting(false);
+        
+        // Trigger the final API call to save the entire project
+        await persistProject();
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            {/* Header with clear hierarchy */}
+            {/* Header */}
             <div>
                 <h2 className="text-xl sm:text-2xl text-white uppercase tracking-[0.2em]">Contact Configuration</h2>
                 <div className="h-[2px] w-12 bg-[#B08B57] mt-3"></div>
@@ -44,17 +52,17 @@ export default function EditContactSection({ onPrev }) {
                 <Button 
                     type="button" 
                     onClick={onPrev} 
-                    disabled={isSubmitting}
+                    disabled={isSaving}
                     className="w-full sm:w-auto px-8 py-3 border border-[#1a1a1a] bg-transparent hover:bg-[#1a1a1a] transition-all duration-300"
                 >
                     Back
                 </Button>
                 <Button 
                     type="submit" 
-                    disabled={isSubmitting}
-                    className={`w-full sm:w-auto px-8 py-3 bg-[#B08B57] text-black font-bold uppercase tracking-widest text-[12px]  transition-all duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    disabled={isSaving}
+                    className={`w-full sm:w-auto px-8 py-3 bg-[#B08B57] text-black font-bold uppercase tracking-widest text-[12px] transition-all duration-300 ${isSaving ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
-                    {isSubmitting ? 'Syncing...' : 'Save All Changes'}
+                    {isSaving ? 'Syncing...' : 'Save All Changes'}
                 </Button>
             </div>
         </form>

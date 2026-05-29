@@ -1,26 +1,43 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
-import { useProjectStore } from '../../store/useProjectStore';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
+import { useProjectStore } from '../../store/useProjectStore';
 
 export default function EditLocationSection({ onNext, onPrev }) {
+    // 1. Access the store
     const { sections, updateSection } = useProjectStore();
-    const { location } = sections;
 
-    const { register, control, handleSubmit, watch } = useForm({
+    // 2. Initialize form with store data
+    const { register, control, handleSubmit, reset, watch } = useForm({
         defaultValues: {
-            mapEmbed: location.mapEmbed || '',
-            landmarks: location.landmarks || []
+            mapEmbed: sections.location?.mapEmbed || '',
+            landmarks: sections.location?.landmarks || []
         }
     });
 
     const { fields, append, remove } = useFieldArray({ control, name: "landmarks" });
-    const mapUrl = watch("mapEmbed"); // Live preview ke liye
+    const mapUrl = watch("mapEmbed"); // Live preview
+
+    // 3. Sync form if store data changes
+    useEffect(() => {
+        reset({
+            mapEmbed: sections.location?.mapEmbed || '',
+            landmarks: sections.location?.landmarks || []
+        });
+    }, [sections.location, reset]);
+
+    const onSubmit = (data) => {
+        // Update the Zustand store locally (no API call here)
+        updateSection('location', data);
+        
+        // Move to the next step
+        onNext();
+    };
 
     return (
         <form
-            onSubmit={handleSubmit((data) => { updateSection('location', data); onNext(); })}
+            onSubmit={handleSubmit(onSubmit)}
             className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500 w-full"
         >
             {/* Header */}
@@ -48,7 +65,7 @@ export default function EditLocationSection({ onNext, onPrev }) {
                 )}
             </div>
 
-            {/* Landmarks List - Clean Layout */}
+            {/* Landmarks List */}
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <label className="text-[9px] uppercase tracking-[0.2em] text-[#555] font-bold">Key Landmarks</label>
@@ -82,7 +99,6 @@ export default function EditLocationSection({ onNext, onPrev }) {
             </div>
 
             {/* Navigation */}
-            {/* Navigation Buttons - Responsive Layout */}
             <div className="flex flex-col-reverse sm:flex-row gap-4 border-t border-[#1a1a1a] pt-8 mt-auto">
                 <Button
                     type="button"
@@ -94,9 +110,9 @@ export default function EditLocationSection({ onNext, onPrev }) {
 
                 <Button
                     type="submit"
-                    className="w-full sm:flex-1 px-8 py-3 bg-[#B08B57] text-black font-bold uppercase tracking-widest text-[12px]  transition-all duration-300 text-center"
+                    className="w-full sm:flex-1 px-8 py-3 bg-[#B08B57] text-black font-bold uppercase tracking-widest text-[12px] transition-all duration-300 text-center"
                 >
-                    Update Location
+                    Update & Continue
                 </Button>
             </div>
         </form>

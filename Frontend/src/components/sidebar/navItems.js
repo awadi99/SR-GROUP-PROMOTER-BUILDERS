@@ -43,11 +43,11 @@ export const mainSidebarItems = [
                 icon: PlusCircle,
             },
 
-            {
-                name: "Edit Project",
-                path: "/dashboard/projects",
-                icon: Pencil,
-            },
+            // {
+            //     name: "Edit Project",
+            //     path: "/dashboard/projects",
+            //     icon: Pencil,
+            // },
 
             {
                 name: "Delete Project",

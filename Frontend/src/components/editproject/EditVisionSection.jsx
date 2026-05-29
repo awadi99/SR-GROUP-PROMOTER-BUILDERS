@@ -1,28 +1,48 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useProjectStore } from '../../store/useProjectStore';
+import { X } from 'lucide-react';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
-import { X } from 'lucide-react'; // Make sure to install lucide-react
+import { useProjectStore } from '../../store/useProjectStore';
 
 export default function EditVisionSection({ onNext, onPrev }) {
+    // 1. Access the store
     const { sections, updateSection } = useProjectStore();
-    const { vision } = sections;
+    const vision = sections.vision || { vision: '', images: [] };
 
-    const { register, handleSubmit } = useForm({
+    // 2. Initialize form
+    const { register, handleSubmit, reset } = useForm({
         defaultValues: {
             vision: vision.vision || '',
         }
     });
 
-    // Handle image removal locally
+    // 3. Sync form with store data
+    useEffect(() => {
+        reset({
+            vision: vision.vision || '',
+        });
+    }, [vision.vision, reset]);
+
+    // 4. Handle image removal locally in the store
     const handleRemoveImage = (indexToRemove) => {
         const updatedImages = vision.images.filter((_, idx) => idx !== indexToRemove);
-        updateSection('vision', { ...vision, images: updatedImages });
+        
+        // Update store directly
+        updateSection('vision', { 
+            ...vision, 
+            images: updatedImages 
+        });
     };
 
     const onSubmit = (data) => {
-        updateSection('vision', { ...vision, ...data });
+        // Update the Zustand store locally (no API call yet)
+        updateSection('vision', { 
+            ...vision, 
+            ...data 
+        });
+        
+        // Move to the next step
         onNext();
     };
 
@@ -53,7 +73,7 @@ export default function EditVisionSection({ onNext, onPrev }) {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {vision.images?.map((url, idx) => (
                         <div key={idx} className="relative aspect-square border border-[#1a1a1a] group overflow-hidden bg-[#050505]">
-                            <img src={url} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Vision" />
+                            <img src={url} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt={`Vision-${idx}`} />
                             
                             {/* Delete Overlay */}
                             <button 
@@ -79,8 +99,19 @@ export default function EditVisionSection({ onNext, onPrev }) {
 
             {/* Navigation */}
             <div className="flex flex-col-reverse sm:flex-row gap-4 border-t border-[#1a1a1a] pt-8">
-                <Button type="button" onClick={onPrev} className="w-full sm:w-auto border border-[#1a1a1a] bg-transparent">Back</Button>
-                <Button type="submit" className="w-full sm:flex-1 bg-[#B08B57] text-black font-bold uppercase tracking-widest text-[12px]">Update & Continue</Button>
+                <Button 
+                    type="button" 
+                    onClick={onPrev} 
+                    className="w-full sm:w-auto border border-[#1a1a1a] bg-transparent hover:bg-[#1a1a1a] text-white px-8 py-3"
+                >
+                    Back
+                </Button>
+                <Button 
+                    type="submit" 
+                    className="w-full sm:flex-1 bg-[#B08B57] text-black font-bold uppercase tracking-widest text-[12px] transition-colors px-8 py-3"
+                >
+                    Update & Continue
+                </Button>
             </div>
         </form>
     );

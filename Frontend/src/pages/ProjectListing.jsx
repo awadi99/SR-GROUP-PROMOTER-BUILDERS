@@ -1,8 +1,6 @@
 import React from 'react';
 import { Building2, Edit3, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-// import {projects} from '../constants/ProjectData.js';
-
 
 export default function ProjectListing({ projects = [] }) {
     const navigate = useNavigate();
@@ -22,15 +20,16 @@ export default function ProjectListing({ projects = [] }) {
                 {projects && projects.length > 0 ? (
                     projects.map((project) => (
                         <div 
-                            key={project.id} 
-                            onClick={() => navigate(`/dashboard/edit-project/${project.id}`)}
+                            key={project._id} 
+                            onClick={() => navigate(`/dashboard/edit-project/${project._id}`)}
                             className="group relative cursor-pointer border border-[#1a1a1a] bg-[#050505] hover:border-[#B08B57]/50 transition-all duration-500 overflow-hidden"
                         >
                             {/* Image Container */}
                             <div className="aspect-[4/3] overflow-hidden relative">
+                                {/* Using the first image from the first unit as a representative image, or a placeholder */}
                                 <img 
-                                    src={project.image || '/placeholder.jpg'} 
-                                    alt={project.title}
+                                    src={project.residences?.units?.[0]?.images?.[0] || '/placeholder.jpg'} 
+                                    alt={project.identity?.title}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
                                 
@@ -46,12 +45,25 @@ export default function ProjectListing({ projects = [] }) {
                             <div className="p-6">
                                 <div className="flex justify-between items-start">
                                     <h3 className="text-white text-sm tracking-[0.1em] uppercase font-medium">
-                                        {project.title}
+                                        {project.identity?.title || "Untitled Project"}
                                     </h3>
                                     <ArrowRight size={14} className="text-[#B08B57] opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-2 group-hover:translate-x-0" />
                                 </div>
-                                <p className="text-[#555] text-[9px] uppercase tracking-[0.2em] mt-2 font-bold">
-                                    {project.location}
+                                
+                                {/* Unit Tags */}
+                                <div className="flex flex-wrap gap-2 mt-3">
+                                    {project.residences?.units?.map((unit, index) => (
+                                        <span 
+                                            key={index} 
+                                            className="text-[8px] uppercase tracking-[0.1em] text-[#555] border border-[#1a1a1a] px-2 py-1"
+                                        >
+                                            {unit.type}
+                                        </span>
+                                    ))}
+                                </div>
+
+                                <p className="text-[#555] text-[9px] uppercase tracking-[0.2em] mt-4 font-bold">
+                                    {project.location?.landmarks?.[0]?.name || "Location Pending"}
                                 </p>
                             </div>
                         </div>

@@ -6,6 +6,7 @@ import { useProjectStore } from '../../store/useProjectStore.js';
 import { compressImage } from '../../utils/imageUtils.js';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
+import { toast } from 'react-toastify';
 
 export default function ResidencesSection({ onNext, onPrev, filesRef }) {
     const { sections, updateSection } = useProjectStore();
@@ -67,7 +68,7 @@ export default function ResidencesSection({ onNext, onPrev, filesRef }) {
         );
         
         if (hasInvalidImages) {
-            alert("Each unit must have exactly 4 images uploaded.");
+            toast.error("Each unit must have exactly 4 images uploaded.");
             return;
         }
 

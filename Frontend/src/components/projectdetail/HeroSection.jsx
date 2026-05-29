@@ -1,58 +1,83 @@
-import React, { useState, useCallback } from "react"; 
-import { motion } from "framer-motion";
+import React, { useState, useCallback, useMemo } from "react";
 import { ArrowLeft, MapPin } from "lucide-react";
 import ResidenceModal from "./ResidenceModal";
 
-export default function HeroSection({ project, onBack }) {
+export default React.memo(function HeroSection({ project, onBack }) {
     const [selectedUnit, setSelectedUnit] = useState(null);
 
     const handleCloseModal = useCallback(() => {
         setSelectedUnit(null);
     }, []);
 
+    // Memoize URL parsing
+    const embedUrl = useMemo(() => {
+        const url = project?.residences?.commonVideoUrl;
+        if (!url) return null;
+        try {
+            return url.split("/shorts/")[1]?.split("?")[0] || url.split("v=")[1]?.split("&")[0];
+        } catch {
+            return null;
+        }
+    }, [project?.residences?.commonVideoUrl]);
+
+    // Guard Clause
+    if (!project) return null;
+
+    // Destructure for cleaner access
+    const { identity, specs, location, residences } = project;
+    const units = residences?.units || [];
+
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 text-[#2D2D2D]">
             {/* HERO GRID */}
             <div className="grid grid-cols-1 xl:grid-cols-[1fr] gap-4">
-                <div className="relative rounded-[24px] md:rounded-[36px] overflow-hidden border border-[#DED8CF] bg-white transform-gpu">
+                <div className="relative rounded-[24px] md:rounded-[36px] overflow-hidden border border-neutral-200 bg-white shadow-sm">
                     <div className="relative h-[400px] sm:h-[500px] lg:h-[700px]">
-                        <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none" />
+                        <img
+                            src={project.vision?.images?.[0] || '/placeholder-hero.jpg'}
+                            alt={identity?.title || "Project Hero"}
+                            className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                        <button 
-                            onClick={onBack} 
-                            className="absolute top-4 left-4 z-20 bg-white/85 backdrop-blur-md border border-white/40 rounded-full px-5 py-2.5 flex items-center gap-2 text-xs hover:bg-white active:scale-95 transition-all duration-300"
+                        <button
+                            onClick={onBack}
+                            className="absolute top-4 left-4 z-20 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full px-5 py-2.5 flex items-center gap-2 text-xs hover:bg-[#A68966] hover:border-[#A68966] transition-all"
                         >
                             <ArrowLeft size={14} /> Back
                         </button>
 
                         <div className="absolute bottom-0 left-0 p-6 sm:p-10 w-full">
-                            <p className="uppercase tracking-[0.22em] text-[10px] text-white/80 mb-2 font-medium">Luxury Residences</p>
-                            <h1 className="text-3xl sm:text-5xl md:text-6xl text-white font-medium mb-4 leading-[1.1] tracking-[-0.03em]">{project.title}</h1>
-                            <p className="max-w-xl text-white/80 text-sm sm:text-base font-light mb-6 line-clamp-2">{project.description}</p>
+                            <p className="uppercase tracking-[0.2em] text-[10px] text-[#C7A87D] mb-2 font-semibold">
+                                {identity?.tagline || "Luxury Residence"}
+                            </p>
+                            <h1 className="text-3xl sm:text-5xl md:text-6xl text-white font-medium mb-4 leading-[1.1]">
+                                {identity?.title || "Untitled Project"}
+                            </h1>
+                            <p className="max-w-xl text-white/80 text-sm sm:text-base font-light mb-6 line-clamp-2">
+                                {identity?.description || ""}
+                            </p>
 
                             <div className="flex flex-wrap gap-2">
-                                {[project.location, project.status, project.possession].map((tag, i) => (
-                                    <span key={i} className="bg-white/85 backdrop-blur-md rounded-full px-4 py-2 text-[11px] font-medium text-[#1E1E1E] flex items-center gap-1.5">
-                                        {i === 0 && <MapPin size={12} className="text-[#A68966]" />}
-                                        {tag}
-                                    </span>
-                                ))}
+                                <span className="bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-4 py-2 text-[11px] text-white flex items-center gap-1.5">
+                                    <MapPin size={12} className="text-[#A68966]" />
+                                    {location?.city || "Location Pending"}
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     {/* SPECS BAR */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#DED8CF] border-t border-[#DED8CF]">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-neutral-200 border-t border-neutral-200">
                         {[
-                            { label: 'Towers', val: project.specs.towers },
-                            { label: 'Floors', val: project.specs.floors },
-                            { label: 'Architect', val: project.specs.architect },
-                            { label: 'RERA', val: project.rera }
+                            { label: 'Towers', val: specs?.towers },
+                            { label: 'Floors', val: specs?.floors },
+                            { label: 'Architect', val: specs?.architect },
+                            { label: 'RERA', val: specs?.rera }
                         ].map((spec, i) => (
-                            <div key={i} className="bg-[#F8F5F0] p-4 text-center">
-                                <p className="text-[10px] uppercase tracking-[0.18em] text-[#7A746B] mb-1 font-medium">{spec.label}</p>
-                                <p className="text-sm font-medium text-[#1E1E1E] truncate">{spec.val}</p>
+                            <div key={i} className="bg-white p-4 text-center">
+                                <p className="text-[9px] uppercase tracking-widest text-neutral-400 mb-1">{spec.label}</p>
+                                <p className="text-sm font-medium text-[#2D2D2D] truncate">{spec.val || 'N/A'}</p>
                             </div>
                         ))}
                     </div>
@@ -61,49 +86,65 @@ export default function HeroSection({ project, onBack }) {
 
             {/* BOTTOM SECTION */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6">
-                <div className="bg-[#F8F5F0] rounded-[24px] border border-[#DED8CF] p-6">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#7A746B] mb-6 font-medium">Available Residences</p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {project.units.map((unit, i) => (
-                            <div key={i} className="group bg-white rounded-2xl overflow-hidden border border-[#E7E1D8] transition-all">
-                                <div className="h-[200px] overflow-hidden">
-                                    <motion.img 
-                                        src={unit.image} 
-                                        alt={unit.type} 
-                                        className="w-full h-full object-cover"
-                                        whileHover={{ scale: 1.05 }}
-                                        transition={{ duration: 0.6 }}
-                                    />
+                {/* RESIDENCES */}
+                <div className="bg-white rounded-[24px] border border-neutral-200 p-6 shadow-sm">
+                    <p className="text-[10px] uppercase tracking-widest text-neutral-400 mb-6">Available Residences</p>
+                    
+                    {units.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {units.map((unit, i) => (
+                                <div key={i} className="group bg-[#FAF9F6] rounded-2xl overflow-hidden border border-neutral-100 hover:border-[#A68966]/30 transition-all">
+                                    <div className="h-[200px] overflow-hidden">
+                                        <img src={unit.images?.[0] || "/placeholder.jpg"} alt={unit.type} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                    </div>
+                                    <div className="p-5">
+                                        <h4 className="text-[#2D2D2D] font-medium text-lg">{unit.type}</h4>
+                                        <p className="text-neutral-500 text-xs mb-4">Area: {unit.area ? `${unit.area} sq.ft` : "N/A"}</p>
+                                        <button
+                                            onClick={() => setSelectedUnit(unit)}
+                                            className="w-full py-2.5 border border-[#A68966]/30 text-[#A68966] text-xs uppercase tracking-widest rounded-xl hover:bg-[#A68966] hover:text-white transition-colors"
+                                        >
+                                            View Floor Plan
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="p-5">
-                                    <h4 className="text-[#1E1E1E] font-medium text-lg">{unit.type}</h4>
-                                    <p className="text-[#7A746B] text-xs mb-4">{unit.area}</p>
-                                    
-                                    <button 
-                                        onClick={() => setSelectedUnit(unit)} 
-                                        className="w-full py-2.5 border border-[#DED8CF] text-[#1E1E1E] text-xs uppercase tracking-[0.18em] rounded-full hover:bg-[#F8F5F0] transition-all"
-                                    >
-                                        View Floor Plan
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-neutral-400 text-sm italic">No residences currently available.</p>
+                    )}
                 </div>
 
-                <div className="bg-[#F8F5F0] rounded-[24px] border border-[#DED8CF] p-6">
-                    <p className="text-[10px] uppercase tracking-[0.18em] text-[#7A746B] mb-4 font-medium">Cinematic Tour</p>
-                    <div className="relative rounded-[22px] overflow-hidden aspect-video">
-                        <video src={project.video} className="w-full h-full object-cover" controls poster={project.image} />
+                {/* CINEMATIC TOUR */}
+                <div className="bg-white rounded-[24px] border border-neutral-200 p-6 shadow-sm">
+                    <p className="text-[10px] uppercase tracking-widest text-neutral-400 mb-4">
+                        Cinematic Tour
+                    </p>
+
+                    <div className="relative rounded-xl overflow-hidden bg-neutral-100 h-[500px] w-full">
+                        {embedUrl ? (
+                            <iframe
+                                src={`https://www.youtube.com/embed/${embedUrl}`}
+                                title="Project Video"
+                                className="w-full h-full"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            />
+                        ) : (
+                            <div className="flex items-center justify-center h-full text-neutral-400 text-xs uppercase">
+                                No Video Available
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
 
-            <ResidenceModal 
-                isOpen={!!selectedUnit} 
-                onClose={handleCloseModal} 
-                unit={selectedUnit} 
+            <ResidenceModal
+                isOpen={!!selectedUnit}
+                onClose={handleCloseModal}
+                unit={selectedUnit}
             />
         </div>
     );
-}
+});

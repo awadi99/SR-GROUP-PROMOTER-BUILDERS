@@ -3,15 +3,15 @@ import apiClient from '../api/apiClient';
 
 /**
  * Custom hook to handle project data lifecycle.
- * Handles fetching list of projects, fetching a single project, and creating new ones.
  */
 export const useProject = () => {
     const queryClient = useQueryClient();
+    const hasToken = !!localStorage.getItem("jwt"); // Guard helper
 
-    // 1. Fetch Projects Query
     const { 
         data: myProjects, 
-        isLoading: isFetchingProjects, 
+        isPending, 
+        isFetching, 
         isError: isProjectsError,
         refetch
     } = useQuery({
@@ -20,11 +20,13 @@ export const useProject = () => {
             const { data } = await apiClient.get('/project/my-projects');
             return data?.data || [];
         },
+        // GUARD: Only fetch if user is logged in
+        enabled: hasToken, 
         staleTime: 1000 * 60 * 5,
         refetchOnWindowFocus: false,
+        retry: false, // Prevents 401 spam on error
     });
 
-    // 2. Create Project Mutation
     const mutation = useMutation({
         mutationFn: async (formData) => {
             const { data } = await apiClient.post('/project/create', formData, {
@@ -39,27 +41,127 @@ export const useProject = () => {
 
     return {
         myProjects,
-        isFetchingProjects,
+        isPending: isPending && hasToken, // Only pending if we are actually trying to fetch
+        isFetching,
         isProjectsError,
         refetchProjects: refetch,
         createProject: mutation.mutate,
         isCreating: mutation.isPending, 
         createError: mutation.error,
-        isCreateSuccess: mutation.isSuccess
+        isCreateSuccess: mutation.isSuccess,
     };
 };
 
 /**
- * Hook to fetch a single project by ID for the detail view
+ * Hook to fetch a single project by ID
  */
 export const useProjectById = (id) => {
+    const hasToken = !!localStorage.getItem("jwt");
+
     return useQuery({
         queryKey: ['project', id],
         queryFn: async () => {
             const { data } = await apiClient.get(`/project/get-project/${id}`);
             return data.data; 
         },
-        enabled: !!id,
+        // GUARD: Check ID AND Auth status
+        enabled: !!id && hasToken,
         staleTime: 1000 * 60 * 10,
+        retry: false,
     });
 };
+
+export const useUpdateProject = (id) => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: async (formData) => {
+            const { data } = await apiClient.put(`/project/update/${id}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            return data;
+        },
+        onSuccess: (updatedProject) => {
+            queryClient.invalidateQueries({ queryKey: ['myProjects'] });
+            queryClient.invalidateQueries({ queryKey: ['project', id] });
+        },
+    });
+
+    return {
+        updateProject: mutation.mutate,
+        isUpdating: mutation.isPending,
+        updateError: mutation.error,
+        isUpdateSuccess: mutation.isSuccess,
+    };
+};
+
+export const useDeleteProject = () => {
+    const queryClient = useQueryClient();
+
+    const mutation = useMutation({
+        mutationFn: async (id) => {
+            const { data } = await apiClient.delete(`/project/delete/${id}`);
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['myProjects'] });
+        },
+    });
+
+    return {
+        deleteProject: mutation.mutate,
+        isDeleting: mutation.isPending,
+        deleteError: mutation.error,
+        isDeleteSuccess: mutation.isSuccess,
+    };
+};
+
+// --- PUBLIC HOOKS (No Guard Needed) ---
+
+export const usePublicProject = (id) => {
+    return useQuery({
+        queryKey: ['public-project', id],
+        queryFn: async () => {
+            try {
+                const response = await apiClient.get(`/project/public/${id}`);
+                
+                // Debugging: This will log exactly what your API returns
+                console.log("Single Project API Response:", response.data);
+
+                if (!response.data || !response.data.success) {
+                    throw new Error("API returned an unsuccessful response");
+                }
+                
+                // Return the 'data' object (the project)
+                return response.data.data;
+            } catch (error) {
+                console.error("Error fetching single project:", error);
+                throw error; // Let React Query handle the error state
+            }
+        },
+        enabled: !!id,
+        retry: 1, // Optional: gives it one more chance if it fails
+    });
+};
+
+export const usePublicProjects = () => {
+    return useQuery({
+        queryKey: ['public-projects'],
+        queryFn: async () => {
+            try {
+                const response = await apiClient.get('/project/all-public');
+                
+                // Debugging: This will log your project list
+                console.log("All Projects API Response:", response.data);
+                
+                return response.data?.data || [];
+            } catch (error) {
+                console.error("Error fetching all projects:", error);
+                return []; // Return empty array on error to prevent crashes
+            }
+        },
+        staleTime: 1000 * 60 * 5,
+        refetchOnWindowFocus: false,
+    });
+};
+

@@ -11,6 +11,7 @@ import NetworkErrorBoundary from './error/NetworkErrorBoundary';
 import TermsOfService from './pages/TermsOfService';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import { useProject } from './hook/useProject';
+import AdminRoute from './components/auth/AdminRoute';
 
 
 
@@ -66,7 +67,7 @@ export default function App() {
                   <Route path="project/:id" element={<ProjectDetail />} />
                 </Route>
                 <Route path='/auth/google/success' element={<GoogleAuthSuccess />} />
-
+                <Route element={<AdminRoute />}>
                 <Route path="/dashboard" element={<MainLayout />}>
                   <Route index element={<Dashboard />} />
                   <Route path="all-projects" element={<AdminProjectGrid />} />
@@ -79,6 +80,7 @@ export default function App() {
                   <Route path="delete-projects" element={<DeleteProjectPage projects ={myProjects} />} />
                   <Route path="profile" element={<Profile/>}/>
                   <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Route>
                 </Route>
 
                 <Route path="*" element={<Navigate to="/" replace />} />

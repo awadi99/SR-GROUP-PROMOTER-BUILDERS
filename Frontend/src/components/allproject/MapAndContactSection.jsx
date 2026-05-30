@@ -2,9 +2,7 @@ import React from "react";
 import { ArrowUpRight, Phone, Mail } from "lucide-react";
 
 export default function MapAndContactSection({ project }) {
-    // console.log(project)
-// console.log(project?.location?.mapEmbed)
-console.log(project?.location?.mapEmbed)
+
     // Guard clause to prevent rendering if project data is missing
     if (!project) return null;
 

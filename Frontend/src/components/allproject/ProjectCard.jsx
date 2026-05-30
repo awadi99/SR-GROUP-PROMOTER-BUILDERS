@@ -4,7 +4,7 @@ import React from 'react';
 import { Eye } from 'lucide-react';
 
 export default function ProjectCard({ project, onClick }) {
-    console.log()
+
     return (
         <div
             onClick={onClick}

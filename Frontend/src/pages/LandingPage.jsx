@@ -6,7 +6,7 @@ import ProjectGrid from '../components/landing/ProjectGrid';
 import Amenities from '../components/landing/Amenities';
 import AboutUs from '../components/landing/AboutUs';
 import ContactUs from '../components/landing/ContactUs';
-// import OurTeams from '../components/landing/OurTeams';
+import OurTeams from '../components/landing/OurTeams';
 import Footer from '../components/common/Footer';
 
 export default function LandingPage() {
@@ -22,7 +22,7 @@ export default function LandingPage() {
         <ProjectGrid />
         <Amenities />
         <AboutUs/>
-        {/* <OurTeams /> */}
+        <OurTeams />
 
         <ContactUs />
         <Footer />

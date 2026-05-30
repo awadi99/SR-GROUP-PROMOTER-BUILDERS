@@ -107,11 +107,11 @@ export const createProjectService = async (projectData, userId) => {
 // =========================================
 // GET MY PROJECTS SERVICE
 // =========================================
-export const getMyProjectsService = async (userId) => {
-    return await Project.find({ createdBy: userId })
-        .sort({ createdAt: -1 })
-        .lean(); 
-};
+// export const getMyProjectsService = async (userId) => {
+//     return await Project.find({ createdBy: userId })
+//         .sort({ createdAt: -1 })
+//         .lean(); 
+// };
 
 // =========================================
 // UPDATE PROJECT SERVICE (ATOMIC)

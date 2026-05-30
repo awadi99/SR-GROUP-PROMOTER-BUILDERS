@@ -125,8 +125,6 @@ export const usePublicProject = (id) => {
             try {
                 const response = await apiClient.get(`/project/public/${id}`);
                 
-                // Debugging: This will log exactly what your API returns
-                console.log("Single Project API Response:", response.data);
 
                 if (!response.data || !response.data.success) {
                     throw new Error("API returned an unsuccessful response");
@@ -150,9 +148,6 @@ export const usePublicProjects = () => {
         queryFn: async () => {
             try {
                 const response = await apiClient.get('/project/all-public');
-                
-                // Debugging: This will log your project list
-                console.log("All Projects API Response:", response.data);
                 
                 return response.data?.data || [];
             } catch (error) {

@@ -1,7 +1,6 @@
 import asyncHandler from "express-async-handler";
 import { 
     createProjectService, 
-    getMyProjectsService, 
     updateProjectService, 
     deleteProjectService 
 } from "./project.service.js";
@@ -31,8 +30,7 @@ const uploadImages = async (files = []) => {
 // CREATE PROJECT
 // =========================================
 export const createProject = asyncHandler(async (req, res) => {
-    console.log("DEBUG - Files detected:", req.files);
-    console.log("DEBUG - Data detected:", req.body.data);
+
     const userId = req.user?._id || req.user?.id;
     if (!userId) {
         res.status(401);
@@ -97,20 +95,8 @@ export const createProject = asyncHandler(async (req, res) => {
 // GET MY PROJECTS
 // =========================================
 export const getMyProjectsController = asyncHandler(async (req, res) => {
-    const userId = req.user?._id || req.user?.id;
-
-    if (!userId) {
-        res.status(401);
-        throw new Error("Unauthorized access.");
-    }
-
-    const projects = await getMyProjectsService(userId);
-
-    return res.status(200).json({
-        success: true,
-        count: projects.length,
-        data: projects
-    });
+    const projects = await Project.find({}).lean(); 
+    res.status(200).json({ success: true, data: projects });
 });
 
 export const getProjectByIdController = asyncHandler(async (req, res) => {

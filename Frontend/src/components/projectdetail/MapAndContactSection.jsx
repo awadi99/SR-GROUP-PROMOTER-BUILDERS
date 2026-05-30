@@ -4,13 +4,8 @@ import { ArrowUpRight, Phone, Mail, Map } from "lucide-react";
 export default React.memo(function MapAndContactSection({ project }) {
     if (!project) return null;
 
-    // Robust phone cleaner: removes anything that isn't a number or a + sign
-    // This ensures the tel: link works consistently on mobile devices.
-    const cleanPhone = useMemo(() => {
-        const phone = project.contact?.phone;
-        if (!phone) return "";
-        return phone.replace(/[^\d+]/g, '');
-    }, [project.contact?.phone]);
+    // Memoize the phone number cleaning to prevent unnecessary string manipulation
+    const cleanPhone = useMemo(() => project.contact?.phone?.replace(/\s/g, ''), [project.contact?.phone]);
 
     return (
         <>
@@ -63,7 +58,7 @@ export default React.memo(function MapAndContactSection({ project }) {
                                 </div>
                             ))
                         ) : (
-                            <p className="text-neutral-400 text-sm italic p-4">No landmarks defined.</p>
+                            <div className="text-neutral-400 text-sm italic p-4">No landmarks defined.</div>
                         )}
                     </div>
                 </div>
@@ -87,7 +82,7 @@ export default React.memo(function MapAndContactSection({ project }) {
                     <div className="space-y-4 sm:space-y-5">
                         {/* PHONE */}
                         <a
-                            href={cleanPhone ? `tel:${cleanPhone}` : "#"}
+                            href={`tel:${cleanPhone}`}
                             className="bg-[#FAF9F6] rounded-[22px] border border-neutral-100 p-5 sm:p-6 flex items-center gap-4 sm:gap-5 hover:border-[#A68966]/30 hover:bg-white transition-all duration-300"
                         >
                             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center text-[#A68966] shrink-0 border border-neutral-200">
@@ -95,15 +90,13 @@ export default React.memo(function MapAndContactSection({ project }) {
                             </div>
                             <div>
                                 <p className="text-neutral-500 text-sm mb-1 font-light">Phone</p>
-                                <h3 className="text-lg sm:text-2xl font-medium text-[#2D2D2D] break-all tracking-tight">
-                                    {project.contact?.phone || "N/A"}
-                                </h3>
+                                <h3 className="text-lg sm:text-2xl font-medium text-[#2D2D2D] break-all tracking-tight">{project.contact?.phone || "N/A"}</h3>
                             </div>
                         </a>
 
                         {/* EMAIL */}
                         <a
-                            href={project.contact?.email ? `mailto:${project.contact.email}` : "#"}
+                            href={`mailto:${project.contact?.email}`}
                             className="bg-[#FAF9F6] rounded-[22px] border border-neutral-100 p-5 sm:p-6 flex items-center gap-4 sm:gap-5 hover:border-[#A68966]/30 hover:bg-white transition-all duration-300"
                         >
                             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white flex items-center justify-center text-[#A68966] shrink-0 border border-neutral-200">
@@ -111,9 +104,7 @@ export default React.memo(function MapAndContactSection({ project }) {
                             </div>
                             <div>
                                 <p className="text-neutral-500 text-sm mb-1 font-light">Email</p>
-                                <h3 className="text-base sm:text-xl font-medium text-[#2D2D2D] break-all tracking-tight">
-                                    {project.contact?.email || "N/A"}
-                                </h3>
+                                <h3 className="text-base sm:text-xl font-medium text-[#2D2D2D] break-all tracking-tight">{project.contact?.email || "N/A"}</h3>
                             </div>
                         </a>
 

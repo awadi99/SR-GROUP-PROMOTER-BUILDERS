@@ -17,7 +17,6 @@ export default function ProjectDetail() {
 
     // Debugging: Monitor the state
     useEffect(() => {
-        console.log("ProjectDetail State:", { id, project, isPending, isError, error });
     }, [id, project, isPending, isError, error]);
 
     useEffect(() => {

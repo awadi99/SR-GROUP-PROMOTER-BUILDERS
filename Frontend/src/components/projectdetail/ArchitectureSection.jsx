@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 
 export default React.memo(function ArchitectureSection({ project }) {
+    // Return early if no project exists to prevent runtime errors
     if (!project) return null;
 
     const vision = project.vision || {};
@@ -9,7 +10,7 @@ export default React.memo(function ArchitectureSection({ project }) {
     const features = vision.features || [];
     const specs = project.specs || {};
 
-    // Memoize the specs conversion
+    // Memoize the specs conversion to prevent unnecessary re-renders
     const specEntries = useMemo(() => Object.entries(specs), [specs]);
 
     return (
@@ -35,7 +36,7 @@ export default React.memo(function ArchitectureSection({ project }) {
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-1 gap-4">
                         {[images[1], images[2]].map((img, idx) => (
-                            <div key={`img-${idx}`} className="rounded-3xl overflow-hidden h-[150px] sm:h-[202px] bg-neutral-100">
+                            <div key={idx} className="rounded-3xl overflow-hidden h-[150px] sm:h-[202px] bg-neutral-100">
                                 <motion.img
                                     src={img || "/placeholder.jpg"}
                                     alt={`Project detail ${idx + 1}`}
@@ -57,7 +58,7 @@ export default React.memo(function ArchitectureSection({ project }) {
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                         {features.map((item, i) => (
                             <div
-                                key={`feature-${i}`}
+                                key={i}
                                 className="group bg-[#FAF9F6] rounded-2xl border border-neutral-100 p-5 hover:border-[#A68966]/30 hover:bg-white transition-all duration-300"
                             >
                                 <h3 className="text-[#2D2D2D] text-sm font-medium tracking-wide">{item}</h3>
@@ -77,9 +78,9 @@ export default React.memo(function ArchitectureSection({ project }) {
 
                 <div className="space-y-4">
                     {specEntries.length > 0 ? (
-                        specEntries.map(([key, value]) => (
+                        specEntries.map(([key, value], i) => (
                             <div
-                                key={key} // Used the actual key for better React tracking
+                                key={i}
                                 className="group flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-6 p-6 rounded-2xl bg-[#FAF9F6] border border-transparent hover:border-[#A68966]/20 hover:bg-white transition-all duration-300"
                             >
                                 <span className="uppercase text-[10px] tracking-[0.2em] text-neutral-400 font-bold group-hover:text-[#A68966] transition-colors">

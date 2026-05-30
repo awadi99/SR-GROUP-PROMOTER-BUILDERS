@@ -42,7 +42,7 @@ export const useAuth = () => {
             sessionStorage.clear();
             
             // Hard redirect to clear any lingering UI state
-            window.location.replace('/login');
+            window.location.replace('/');
         }
     });
 

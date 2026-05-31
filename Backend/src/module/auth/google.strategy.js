@@ -8,7 +8,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: 'https://sr-group-promoter-builders.onrender.com/api/auth/google/callback'||'http://localhost:3000/api/auth/google/callback', // Yahan hardcode karein
+            callbackURL: 'https://api.srgroupandbuilders.com/api/auth/google/callback'||'https://sr-group-promoter-builders.onrender.com/api/auth/google/callback'||'http://localhost:3000/api/auth/google/callback', // Yahan hardcode karein
             passReqToCallback: true,
             proxy: true 
         },

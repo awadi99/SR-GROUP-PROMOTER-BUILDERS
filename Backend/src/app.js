@@ -29,7 +29,7 @@ app.use("/api/", limiter); // Apply to all API routes
 app.use(compression()); 
 
 // 4. CORS
-const allowedOrigins = [' https://sr-group-promoter-builders.vercel.app ','http://localhost:5173'];
+const allowedOrigins = ['https://www.srgroupandbuilders.com','https://srgroupandbuilders.com','https://sr-group-promoter-builders.vercel.app ','http://localhost:5173'];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {

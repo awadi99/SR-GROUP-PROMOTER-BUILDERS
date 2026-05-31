@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const apiClient = axios.create({
   // Localhost setup for development
-  baseURL: import.meta.env.VITE_API_BASE_URL ||'https://sr-group-promoter-builders.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL ||'https://api.srgroupandbuilders.com/api',
   // 'http://localhost:3000/api',
   timeout: 120000, 
   withCredentials: true, 

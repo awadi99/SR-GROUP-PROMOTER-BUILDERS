@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+  xsi:schemaLocation="
+    http://www.sitemaps.org/schemas/sitemap/0.9
+    http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd
+    http://www.google.com/schemas/sitemap-image/1.1
+    http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd
+  "
+>
+
+  <url>
+    <loc>https://www.srgroupandbuilders.com/</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    
+    <image:image>
+      <image:loc>https://www.srgroupandbuilders.com/logo.svg</image:loc>
+      <image:title>SR Group Promoters &amp; Builders Logo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.srgroupandbuilders.com/favicon.ico</image:loc>
+      <image:title>SR Group Favicon</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.srgroupandbuilders.com/android-chrome-512x512.png</image:loc>
+      <image:title>SR Group Icon 512</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.srgroupandbuilders.com/android-chrome-192x192.png</image:loc>
+      <image:title>SR Group Icon 192</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.srgroupandbuilders.com/apple-touch-icon.png</image:loc>
+      <image:title>SR Group Apple Icon</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.srgroupandbuilders.com/favicon-32x32.png</image:loc>
+      <image:title>SR Group Favicon 32</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.srgroupandbuilders.com/favicon-16x16.png</image:loc>
+      <image:title>SR Group Favicon 16</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://www.srgroupandbuilders.com/login</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://www.srgroupandbuilders.com/register</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://www.srgroupandbuilders.com/forgot-password</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://www.srgroupandbuilders.com/terms</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://www.srgroupandbuilders.com/privacy-policy</loc>
+    <lastmod>2026-05-31</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>

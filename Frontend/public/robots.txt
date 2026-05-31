@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /login
+Allow: /register
+Allow: /terms
+Allow: /privacy-policy
+Allow: /contact
+
+Sitemap: https://www.srgroupandbuilders.com/sitemap.xml

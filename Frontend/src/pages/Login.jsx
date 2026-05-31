@@ -28,8 +28,9 @@ export default function Login() {
     const onSubmit = (data) => {
         loginUser.mutate(data, {
             onSuccess: (res) => {
-                navigate('/dashboard');
                 toast.success(res.message || "Welcome back!");
+                navigate('/dashboard');
+
             },
             onError: (err) => {
                 toast.error(err.response?.data?.message || "Invalid credentials");

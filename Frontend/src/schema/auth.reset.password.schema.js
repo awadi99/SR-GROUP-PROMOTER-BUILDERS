@@ -7,14 +7,14 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$
 const emailRegex = /^(?!.*\.\.)[A-Za-z0-9]+([._%+-]?[A-Za-z0-9]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
 
 // Mobile: Validates 10-digit numbers (supports optional +91 prefix)
-const mobileRegex = /^(\+91[\s-]?)?[6789]\d{9}$/;
+
 
 const resetPasswordSchema = z.object({
-    mobile: z
-        .string()
-        .regex(mobileRegex, "Invalid mobile number")
-        .optional()
-        .or(z.literal("")), // Allows empty if mobile isn't mandatory
+    adminCode: z
+    .string()
+    .min(3, "adminCode must be at least 3 characters")
+    .max(30, "adminCode is too long")
+    .trim(),
 
     email: z
         .string()

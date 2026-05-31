@@ -46,10 +46,10 @@ export default function ForgotPassword() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {/* Mobile Number Field */}
                     <Input
-                        label="Mobile Number"
-                        placeholder="+91 00000 00000"
-                        error={errors.mobile?.message}
-                        {...register("mobile")}
+                        label="Admin Code"
+                        placeholder="SRXXXX"
+                        error={errors.adminCode?.message}
+                        {...register("adminCode")}
                         className={inputStyle}
                     />
 

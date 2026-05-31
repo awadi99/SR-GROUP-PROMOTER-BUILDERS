@@ -29,17 +29,22 @@ app.use("/api/", limiter); // Apply to all API routes
 app.use(compression()); 
 
 // 4. CORS
-const allowedOrigins = ['https://www.srgroupandbuilders.com','https://srgroupandbuilders.com','http://localhost:5173'];
+const allowedOrigins = ['https://www.srgroupandbuilders.com', 'https://srgroupandbuilders.com', 'http://localhost:5173'];
+
 app.use(cors({
     origin: (origin, callback) => {
+        // This will print the exact origin the browser is sending in your Render Logs
+        console.log("DEBUG: Received Request Origin:", origin);
+        
         if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
             callback(null, true);
         } else {
+            console.error("CORS REJECTED. Origin received:", origin);
             callback(new Error('CORS Policy Blocked'));
         }
     },
     credentials: true, 
-    methods: ['GET', 'POST', 'PUT','PATCH', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 

@@ -5,7 +5,7 @@ export const useAuth = () => {
     const queryClient = useQueryClient();
 
     // Check if token exists once to determine if we should attempt a fetch
-    // const hasToken = !!localStorage.getItem("jwt");
+    const hasToken = !!localStorage.getItem("jwt");
 
     // 1. User Query - Optimized with 'enabled' to prevent unauthorized loops
     const { 
@@ -20,7 +20,7 @@ export const useAuth = () => {
             return data;
         },
         // IMPORTANT: Only fetch if a token is present in localStorage
-        // enabled: hasToken, 
+        enabled: hasToken, 
         staleTime: 1000 * 60 * 15, // 15 mins
         retry: false, // Prevents persistent error loops
         refetchOnWindowFocus: false,
@@ -54,6 +54,7 @@ export const useAuth = () => {
             queryClient.setQueryData(['authUser'], data);
         }
     });
+
     // 4. Registration
     const registerUser = useMutation({
         mutationFn: async (userData) => {
@@ -76,7 +77,7 @@ export const useAuth = () => {
         user, 
         isAuthenticated,
         // isLoading is only true if we have a token AND we are actively fetching
-        isLoading, 
+        isLoading: isLoading && hasToken, 
         isFetching,
         isError, 
         loginUser, 

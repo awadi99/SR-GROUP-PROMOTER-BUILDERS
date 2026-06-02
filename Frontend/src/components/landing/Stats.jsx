@@ -13,7 +13,6 @@ export default function PremiumLegacyStats() {
         {/* Dark Grid */}
         <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:60px_60px] md:bg-[size:120px_120px]" />
       </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         
         {/* Header */}
@@ -22,19 +21,17 @@ export default function PremiumLegacyStats() {
             <p className="uppercase tracking-[0.3em] text-[#B8860B] text-[10px] font-bold mb-6 border-l border-[#B8860B] pl-4">
               SR Group Legacy
             </p>
-            <h2 className="text-[clamp(2.5rem,8vw,7rem)] leading-[0.9] tracking-tighter font-bold text-white">
-              Crafted for <br />
-              <span className="italic font-light text-[#B8860B]">timeless living.</span>
+            <h2 className="text-[clamp(2.5rem,8vw,5rem)] leading-[0.9] tracking-tighter font-bold text-white">
+              Homes built for <br />
+              <span className="italic font-light text-[#B8860B]">a lifetime.</span>
             </h2>
           </motion.div>
-
           <div className="max-w-md lg:ml-auto border-l border-[#B8860B]/30 pl-6 transform-gpu">
             <p className="text-white/50 leading-[1.8] text-[14px] md:text-[15px] font-light">
-              Every development by SR Group reflects a commitment to architectural sophistication and engineering precision.
+              We focus on great design and build every home with care and attention to detail.
             </p>
           </div>
         </div>
-
         {/* Responsive Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {stats.map((stat, index) => {
@@ -58,7 +55,6 @@ export default function PremiumLegacyStats() {
                   </div>
                   <span className="text-[9px] text-white/20 font-bold tracking-[0.2em]">0{index + 1}</span>
                 </div>
-
                 <h3 className="text-[2.5rem] md:text-[3.5rem] font-bold text-white mb-2 tracking-tighter">
                   {stat.value}
                 </h3>

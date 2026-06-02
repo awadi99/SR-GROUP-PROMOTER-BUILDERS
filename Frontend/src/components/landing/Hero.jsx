@@ -26,10 +26,10 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[clamp(2.5rem,7vw,6rem)] font-serif text-white font-medium leading-[1.1] tracking-tight uppercase"
+            className="text-[clamp(2.5rem,7vw,6rem)]  text-white font-medium leading-[1.1] tracking-tight "
           >
             SR GROUP <br />
-            <span className="text-luxury-gold text-[clamp(1.5rem,4vw,3.5rem)] font-light tracking-[0.2em] block mt-4  ">
+            <span className="text-[clamp(1.5rem,4vw,3.5rem)] font-medium tracking-[0.2em] block mt-4  ">
               PROMOTER AND BUILDER
             </span>
           </motion.h1>
@@ -38,7 +38,7 @@ export default function Hero() {
             initial={{ width: 0 }}
             animate={{ width: "12rem" }}
             transition={{ delay: 1, duration: 1.5 }}
-            className="h-[1px] bg-white/40 mx-auto mt-12"
+            className="h-px bg-white/40 mx-auto mt-12"
           />
         </div>
       </div>
@@ -60,7 +60,8 @@ export default function Hero() {
 
           {/* Explore Projects Button (Primary) */}
           <button
-            className="group relative text-white uppercase tracking-[0.2em] text-[9px] py-4 border-b border-white/30 hover:border-[#B08B57] transition-all duration-500 pointer-events-auto"
+            onClick={()=>window.location.href='/#project'}
+            className="group relative text-white uppercase tracking-[0.2em] text-[9px] py-4 border-b border-white/30 hover:border-[#B08B57] transition-all duration-500 pointer-events-auto scroll-smooth"
             aria-label="Click to view our luxury real estate projects"
           >
             Explore Projects

@@ -53,7 +53,7 @@ export default function App() {
         <div className={`transition-opacity duration-1000 ${showIntro ? "opacity-0" : "opacity-100"}`}>
           <NetworkErrorBoundary>
             {/* Suspense uses your custom LoadingSpinner during lazy route transitions */}
-            <Suspense fallback={<LoadingSpinner />}>
+            <Suspense fallback={<LoadingSpinner/>}>
             <ToastContainer position="top-center" autoClose={2000} theme="dark" transition={Flip} />
               <Routes>
                 <Route path='/' element={<LandingPage />} />

@@ -2,7 +2,7 @@ import React, { memo, useCallback, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { usePublicProjects } from "../../hook/useProject"; 
+import { usePublicProjects } from "../../hook/useProject";
 
 const getId = (id) => (id && typeof id === "object" && id.$oid ? id.$oid : id);
 
@@ -16,24 +16,31 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
 };
 
-const ProjectCard = memo(({ project, onClick }) => {
+const ProjectCard = memo(({ project, onNavigate }) => {
   const title = project?.identity?.title || "Untitled Project";
   const category = project?.identity?.tagline || "Luxury Residence";
   const image = project?.vision?.images?.[0] || "";
   const location = project?.location?.landmarks?.[0]?.name || "Location Unavailable";
+  const projectId = getId(project._id);
+
+  const handleClick = useCallback(() => {
+    onNavigate(projectId);
+  }, [onNavigate, projectId]);
 
   return (
     <motion.div
       layout
       variants={cardVariants}
-      onClick={onClick}
+      onClick={handleClick}
       className="group relative w-full aspect-[4/5] overflow-hidden rounded-[24px] cursor-pointer bg-neutral-200 shadow-sm will-change-transform"
+      role="listitem"
     >
       <div className="absolute inset-0">
         <img
           src={image}
           alt={title}
           loading="lazy"
+          sizes="(max-width: 768px) 100vw, 50vw"
           className="w-full h-full object-cover transform-gpu transition-transform duration-700 ease-out group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -61,14 +68,13 @@ const ProjectCard = memo(({ project, onClick }) => {
 
 export default function ProjectGrid() {
   const navigate = useNavigate();
-  // Set default empty array to avoid undefined errors during initial load
   const { data: publicProjects = [], isPending, isError } = usePublicProjects();
-  
+
   const [visibleCount, setVisibleCount] = useState(12);
   const PROJECTS_PER_PAGE = 12;
 
   const handleNavigate = useCallback((id) => {
-    navigate(`/luxury/project/${getId(id)}`);
+    navigate(`/luxury/project/${id}`);
   }, [navigate]);
 
   const displayedProjects = useMemo(() => {
@@ -79,13 +85,13 @@ export default function ProjectGrid() {
 
   if (isError) {
     return (
-      <section className="py-32 text-center text-neutral-400">
+      <section className="py-32 text-center text-neutral-400" aria-live="polite">
         <p>Unable to load projects at the moment.</p>
-        <button 
-            onClick={() => window.location.reload()} 
-            className="mt-4 text-[#A68966] underline hover:text-[#8c7457] transition-colors"
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 text-[#A68966] underline hover:text-[#8c7457] transition-colors"
         >
-            Retry Connection
+          Retry Connection
         </button>
       </section>
     );
@@ -105,13 +111,19 @@ export default function ProjectGrid() {
         </div>
 
         {isPending ? (
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 animate-pulse">
-             {[...Array(4)].map((_, i) => <div key={i} className="aspect-[4/5] rounded-[24px] bg-neutral-200" />)}
-           </div>
+          <div 
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 animate-pulse" 
+            aria-busy="true" 
+            aria-label="Loading projects"
+          >
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="aspect-[4/5] rounded-[24px] bg-neutral-200" />
+            ))}
+          </div>
         ) : publicProjects.length === 0 ? (
-           <div className="py-20 text-center text-neutral-500 italic">
-             <p>No projects currently available.</p>
-           </div>
+          <div className="py-20 text-center text-neutral-500 italic">
+            <p>No projects currently available.</p>
+          </div>
         ) : (
           <motion.div
             variants={containerVariants}
@@ -119,13 +131,14 @@ export default function ProjectGrid() {
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
+            role="list"
           >
             <AnimatePresence mode="popLayout">
               {displayedProjects.map((project) => (
                 <ProjectCard
                   key={getId(project._id)}
                   project={project}
-                  onClick={() => handleNavigate(project._id)}
+                  onNavigate={handleNavigate}
                 />
               ))}
             </AnimatePresence>

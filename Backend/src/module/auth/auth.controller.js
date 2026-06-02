@@ -54,21 +54,26 @@ export const logout = async (req, res) => {
 
 export const resetPasswordDirect = async (req, res) => {
     try {
-        const { email, adminCode, newPassword } = req.body;
+        const { email, adminCode, password } = req.body; // Changed newPassword to password
         
-        // Use atomic update to reduce DB round-trips
+        // Defensive check: prevent hashing undefined
+        if (!password) {
+            return sendResponse(res, 400, { message: "Password is required." });
+        }
+        
         const user = await User.findOne({ email: email.toLowerCase(), adminCode }).select("+password");
         if (!user) return sendResponse(res, 404, { message: "Account not found." });
 
-        user.password = await bcrypt.hash(newPassword, 12); // Use 12 rounds for production
+        user.password = await bcrypt.hash(password, 12); 
         await user.save();
 
         sendResponse(res, 200, { success: true, message: "Password updated." });
     } catch (error) {
+        // Log the actual error to your server console so you can see it
+        console.error("Reset Password Error:", error);
         sendResponse(res, 500, { message: "Internal server error." });
     }
 };
-
 
 
 export const googleCallback = async (req, res) => {

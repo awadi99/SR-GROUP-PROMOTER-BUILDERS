@@ -4,10 +4,10 @@ import { FiGithub, FiLinkedin, FiInstagram, FiYoutube } from "react-icons/fi";
 import { Mail, MapPin, Phone, Send, Code2, Award } from "lucide-react";
 
 const SOCIAL_LINKS = [
-  { Icon: FiInstagram, href: "#" },
-  { Icon: FiYoutube, href: "#" },
-  { Icon: FiLinkedin, href: "#" },
-  { Icon: FiGithub, href: "#" }
+  { Icon: FiInstagram, href: "https://www.instagram.com/sr_group_baramati/" },
+  { Icon: FiYoutube, href: "https://youtube.com/@srgroup1?si=9v3Omt0MUZ96v-ma" },
+  { Icon: FiLinkedin, href: "https://www.linkedin.com/in/aditya-waghmare-95271b25a/" },
+  { Icon: FiGithub, href: "https://github.com/awadi99" }
 ];
 
 const EXPLORE_LINKS = [
@@ -42,7 +42,7 @@ export default function Footer() {
             <div className="inline-flex items-center gap-3 py-3 px-5 rounded-2xl bg-white/5 border border-slate-800 group hover:border-[#B08B57]/30 transition-all transform-gpu">
               <Code2 size={18} className="text-[#B08B57]" />
               <div className="text-left">
-                <p className="text-[9px] uppercase tracking-[0.2em] text-slate-500 font-black">Engineered By</p>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-slate-500 font-black">Developed By</p>
                 <p className="text-sm font-bold text-slate-300 group-hover:text-[#B08B57] transition-colors">Aditya Waghmare</p>
               </div>
             </div>
@@ -64,11 +64,11 @@ export default function Footer() {
 
           {/* 3. HEADQUARTERS CONTACT */}
           <div className="lg:col-span-3 text-left">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#B08B57] mb-8">Headquarters</h3>
+            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#B08B57] mb-8">Developer Info</h3>
             <ul className="space-y-5 text-sm font-bold text-slate-400">
               <li className="flex items-start gap-4">
                 <MapPin size={20} className="text-[#B08B57] shrink-0" />
-                <span className="leading-snug">Pune, Maharashtra,<br />India 411001</span>
+                <span className="leading-snug">Satav Chowk, Baramati,<br />Maharashtra 413102</span>
               </li>
               <li>
                 <a href="tel:+919673298788" className="flex items-center gap-4 hover:text-white transition-all group">
@@ -77,7 +77,7 @@ export default function Footer() {
               </li>
               <li>
                 <a href="mailto:hello@srgroup.com" className="flex items-center gap-4 hover:text-white transition-all group">
-                  <Mail size={18} className="text-[#B08B57]" /> hello@srgroup.com
+                  <Mail size={18} className="text-[#B08B57]" />adityawaghmare9990@gmail.com
                 </a>
               </li>
             </ul>

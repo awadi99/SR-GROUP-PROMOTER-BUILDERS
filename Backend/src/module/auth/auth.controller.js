@@ -114,12 +114,3 @@ export const verifyadminCode = async (req, res) => {
 
 
 
-export const getDashboardStats = asyncHandler(async (req, res) => {
-
-    const stats = await getAdminStats()
-
-    return res.status(200).json({
-        success: true,
-        data: stats
-    });
-});

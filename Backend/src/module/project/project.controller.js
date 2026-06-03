@@ -8,7 +8,7 @@ import {
 import { uploadBuffer } from "../../lib/uploadToCloudinary.js";
 import Project from "./project.model.js";
 import mongoose from "mongoose";
-import User from "../auth/auth.model.js";
+
 
 const uploadImages = async (files = []) => {
     if (!Array.isArray(files) || files.length === 0) return [];

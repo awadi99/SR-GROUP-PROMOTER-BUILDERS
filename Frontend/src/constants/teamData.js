@@ -11,7 +11,7 @@ export const team = [
         name: "Pranita Khomane", 
         role: "Owner", 
         bio: "She works to ensure our growth stays sustainable and our operations run perfectly.",
-        image: Prakash
+        image: ""
     },
     { 
         name: "Sneha Phadtare", 
@@ -23,7 +23,7 @@ export const team = [
         name: "Prakash Bhise", 
         role: "Side Management", 
         bio: "He manages our work sites to ensure everything is built efficiently and correctly.",
-        image: ""
+        image: Prakash
     },
     { 
         name: "Kishor Bandalkar", 

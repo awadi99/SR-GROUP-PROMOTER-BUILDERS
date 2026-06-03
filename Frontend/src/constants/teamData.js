@@ -1,4 +1,4 @@
-import { sharad,Sneha} from '../assets/team/index';
+import { sharad,Sneha,Prakash} from '../assets/team/index';
 
 export const team = [
     { 
@@ -11,7 +11,7 @@ export const team = [
         name: "Pranita Khomane", 
         role: "Owner", 
         bio: "She works to ensure our growth stays sustainable and our operations run perfectly.",
-        image: ""
+        image: Prakash
     },
     { 
         name: "Sneha Phadtare", 

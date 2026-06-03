@@ -1,5 +1,7 @@
 import Project from "./project.model.js";
 import { v2 as cloudinary } from 'cloudinary';
+import User from "../auth/auth.model.js";
+import Project from "./project.model.js";
 
 // =========================================
 // HELPER FUNCTIONS

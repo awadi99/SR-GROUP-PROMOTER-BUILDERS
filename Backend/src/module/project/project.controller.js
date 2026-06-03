@@ -2,7 +2,8 @@ import asyncHandler from "express-async-handler";
 import { 
     createProjectService, 
     updateProjectService, 
-    deleteProjectService 
+    deleteProjectService,
+    getAdminStats
 } from "./project.service.js";
 import { uploadBuffer } from "../../lib/uploadToCloudinary.js";
 import Project from "./project.model.js";

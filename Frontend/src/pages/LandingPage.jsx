@@ -9,6 +9,7 @@ import ContactUs from '../components/landing/ContactUs';
 import OurTeams from '../components/landing/OurTeams';
 import Footer from '../components/common/Footer';
 import FAQ from '../components/landing/FAQ';
+import OurJourney from '../components/landing/OurJourney';
 
 export default function LandingPage() {
   return (
@@ -20,6 +21,7 @@ export default function LandingPage() {
       
       <div> 
         <Stats />
+        <OurJourney/>
         <ProjectGrid />
         <Amenities />
         <AboutUs/>

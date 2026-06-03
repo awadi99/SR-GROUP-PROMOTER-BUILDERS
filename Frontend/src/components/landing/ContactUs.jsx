@@ -54,15 +54,15 @@ export default function ContactUs() {
             <ContactCard 
               icon={<Mail size={22} />} 
               title="Email Us" 
-              detail="hello@srstudio.com" 
-              href="mailto:hello@srstudio.com" 
+              detail="srgroup2023@gmail.com" 
+              href="mailto:srgroup2023@gmail.com" 
               hover 
             />
             <ContactCard 
               icon={<Phone size={22} />} 
               title="Call Us" 
-              detail="+91 9468452222" 
-              href="tel:+91 9468452222" 
+              detail="+91 9856412222" 
+              href="tel:+91 9856412222" 
               hover 
             />
           </div>

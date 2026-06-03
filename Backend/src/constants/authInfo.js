@@ -23,7 +23,7 @@ export const authorizedUsers = [
     { adminCode: "SRGPB41209", role: "admin" }, { adminCode: "SRGPB42831", role: "admin" },
     { adminCode: "SRGPB43156", role: "admin" }, { adminCode: "SRGPB44594", role: "admin" },
     { adminCode: "SRGPB45382", role: "admin" }, { adminCode: "SRGPB46715", role: "admin" },
-    { adminCode: "SRGPB47264", role: "admin" }, { adminCode: "SRGPB48980", role: "admin" },
+    { adminCode: "SRGPB47264", role: "admin" }, { adminCode: "SRGPB42222", role: "admin" },
     { adminCode: "SRGPB49433", role: "admin" }, { adminCode: "SRGPB50627", role: "admin" },
   
 

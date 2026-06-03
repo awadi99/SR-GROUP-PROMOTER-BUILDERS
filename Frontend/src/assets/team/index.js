@@ -1,4 +1,4 @@
 import sharad from'./sharad.jpeg';
 
-
-export {sharad};
+import Sneha from './Sneha.jpeg';
+export {sharad,Sneha};

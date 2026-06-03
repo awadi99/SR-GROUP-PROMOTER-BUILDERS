@@ -2,8 +2,10 @@ import React from 'react';
 import { Briefcase, Search, BarChart3 } from 'lucide-react';
 import Card from '../components/dashboard/Cards/Card';
 // import TestGraph from '../components/dashboard/Graph/TestGraph';
+import { useProject } from '../hook/useProject.js';
 
 export default function DashboardLayout() {
+    const { stats, isStatsLoading } = useProject();
     return (
         <div className="min-h-screen w-full bg-[#050505] text-slate-300 transition-colors duration-300">
             {/* Header Section */}
@@ -29,7 +31,10 @@ export default function DashboardLayout() {
             <main className="p-6 md:p-10 space-y-10 max-w-[1600px] mx-auto">
                 {/* Metrics/Stats Card Section */}
                 <section className="w-full">
-                    <Card />
+                    <Card 
+                    stats={stats}
+                    isLoading={isStatsLoading}
+                    />
                 </section>
 
                 {/* Analytics Section */}

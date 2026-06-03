@@ -7,6 +7,7 @@ import {
 import { uploadBuffer } from "../../lib/uploadToCloudinary.js";
 import Project from "./project.model.js";
 import mongoose from "mongoose";
+import User from "../auth/auth.model.js";
 
 const uploadImages = async (files = []) => {
     if (!Array.isArray(files) || files.length === 0) return [];
@@ -255,4 +256,17 @@ export const getPublicProjectController = asyncHandler(async (req, res) => {
 export const getAllPublicProjectsController = asyncHandler(async (req, res) => {
     const projects = await Project.find({}).lean(); 
     res.status(200).json({ success: true, data: projects });
+});
+
+
+
+
+export const getDashboardStats = asyncHandler(async (req, res) => {
+
+    const stats = await getAdminStats()
+
+    return res.status(200).json({
+        success: true,
+        data: stats
+    });
 });

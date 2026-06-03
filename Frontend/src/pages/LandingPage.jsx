@@ -8,6 +8,7 @@ import AboutUs from '../components/landing/AboutUs';
 import ContactUs from '../components/landing/ContactUs';
 import OurTeams from '../components/landing/OurTeams';
 import Footer from '../components/common/Footer';
+import FAQ from '../components/landing/FAQ';
 
 export default function LandingPage() {
   return (
@@ -23,7 +24,7 @@ export default function LandingPage() {
         <Amenities />
         <AboutUs/>
         <OurTeams />
-
+        <FAQ/>
         <ContactUs />
         <Footer />
       </div>

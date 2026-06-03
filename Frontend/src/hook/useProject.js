@@ -39,8 +39,27 @@ export const useProject = () => {
         }
     });
 
+
+    const {
+        data: stats,
+        isLoading: isStatsLoading,
+        isError: isStatsError
+    } = useQuery({
+        queryKey: ['dashboardStats'],
+        queryFn: async () => {
+            const { data } = await apiClient.get('/project/stats');
+            return data.data;
+        },
+        enabled: hasToken,
+        staleTime: 1000 * 60 * 5,
+        refetchOnWindowFocus: false,
+    });
+
     return {
         myProjects,
+        stats,
+        isStatsLoading,
+        isStatsError,
         isPending: isPending && hasToken, // Only pending if we are actually trying to fetch
         isFetching,
         isProjectsError,
@@ -160,3 +179,4 @@ export const usePublicProjects = () => {
     });
 };
 
+export const use

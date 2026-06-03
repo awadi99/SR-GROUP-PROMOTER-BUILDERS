@@ -7,7 +7,8 @@ import {
     updateProject, 
     deleteProject ,
     getPublicProjectController,
-    getAllPublicProjectsController
+    getAllPublicProjectsController,
+    getDashboardStats
 } from "./project.controller.js";
 import { protect } from "../../middlewares/auth.middleware.js";
 import upload from "../../middlewares/multer.middleware.js"; 
@@ -86,5 +87,8 @@ router.delete(
     deleteProjectLimiter, 
     deleteProject
 );
+
+
+router.get('/stats',protect,getDashboardStats);
 
 export default router;

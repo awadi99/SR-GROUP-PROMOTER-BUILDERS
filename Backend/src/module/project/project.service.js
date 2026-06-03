@@ -199,3 +199,21 @@ export const deleteProjectService = async (id, userId) => {
     await Project.deleteOne({ _id: id });
     return { success: true };
 };
+
+
+
+export const getAdminStats = async(req,res)=>{
+    try{
+            const [totalUser,totalProject] = await Promise.all([
+                User.countDocuments(),
+                Project.countDocuments()
+            ]);
+
+            return {
+                totalUser,totalProject
+            };
+    }catch(error)
+    {
+        console.error(error)
+    }
+}

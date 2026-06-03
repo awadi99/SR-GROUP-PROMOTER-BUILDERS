@@ -31,10 +31,9 @@ export default function Card({ stats }) {
 
     const getValue = (id) => {
         switch(id) {
-            case 1: return data.totalProjects ?? "0"; // 'totalStudents' ऐवजी 'totalProjects'
-            case 2: return data.activeEnquiries ?? "0"; // 'totalTests' ऐवजी 'activeEnquiries'
-            case 3: return data.pendingTasks ?? "0";  // 'todayAttendance' ऐवजी 'pendingTasks'
-            case 4: return data.galleryItems ?? "0";
+            case 1: return data.totalProject ?? "0"; // 'totalStudents' ऐवजी 'totalProjects'
+            case 2: return data.totalUser ?? "0"; // 'totalTests' ऐवजी 'activeEnquiries'
+            case 3: return data.galleryItems ?? "0";
             default: return "0";
         }
     };

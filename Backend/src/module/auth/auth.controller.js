@@ -3,6 +3,7 @@ import { generateToken } from "../../lib/utils.js";
 import redisClient from "../../config/redis.js";
 import bcrypt from "bcryptjs";
 import User from "./auth.model.js";
+import { getAdminStats } from "../project/project.service.js";
 
 // Helper for standardized responses
 const sendResponse = (res, statusCode, data) => res.status(statusCode).json(data);
@@ -110,3 +111,15 @@ export const verifyadminCode = async (req, res) => {
         sendResponse(res, 500, { message: "Verification service temporarily unavailable." });
     }
 };
+
+
+
+export const getDashboardStats = asyncHandler(async (req, res) => {
+
+    const stats = await getAdminStats()
+
+    return res.status(200).json({
+        success: true,
+        data: stats
+    });
+});

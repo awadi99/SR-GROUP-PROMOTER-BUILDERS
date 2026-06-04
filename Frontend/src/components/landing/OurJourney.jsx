@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Building2, Award, Landmark } from "lucide-react";
 import journeyData from "../../constants/OurJourneyData.js";
 
-// Animation Variants (Kept outside for performance)
+// Animation Variants
 const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
@@ -41,7 +41,7 @@ const OurJourney = memo(() => {
                     {/* Header */}
                     <motion.div variants={fadeUp} className="text-center mb-20">
                         <p className="text-[#B08B57] uppercase tracking-[0.4em] text-xs font-bold mb-4">
-                            Our Legacy
+                            {journeyData.tagline}
                         </p>
                         <h2 className="text-5xl md:text-7xl font-bold text-white">
                             {journeyData.title}
@@ -63,34 +63,28 @@ const OurJourney = memo(() => {
                                     alt="SR Group"
                                     loading="lazy"
                                     decoding="async"
-                                    className="w-full h-[650px] object-contain  transition duration-1000 hover:scale-105"
+                                    className="w-full h-[650px] object-contain transition duration-1000 hover:scale-105"
                                 />
                             </div>
                             <div className="absolute bottom-8 left-8 backdrop-blur-xl bg-black/50 border border-[#B08B57]/20 rounded-2xl px-6 py-5">
                                 <p className="text-[#B08B57] text-xs uppercase tracking-[0.3em]">Since</p>
-                                <h3 className="text-white text-3xl font-bold">2012</h3>
+                                <h3 className="text-white text-3xl font-bold">2015</h3>
                             </div>
                         </motion.div>
 
                         {/* Right Content */}
                         <motion.div variants={slideRight} style={{ willChange: "transform" }}>
                             <p className="text-[#B08B57] uppercase tracking-[0.35em] text-xs mb-6">
-                                Building Excellence
+                                {journeyData.subtitle}
                             </p>
                             <h3 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-8">
-                                Creating Landmarks <span className="text-[#B08B57]"> That Inspire</span>
+                                Trust and Reliability <span className="text-[#B08B57]">Since Day One</span>
                             </h3>
                             <div className="w-16 h-[2px] bg-[#B08B57] mb-8"></div>
                             
-                            {/* Correctly Rendered Description */}
-                            <p className="text-neutral-400 leading-9 text-lg">
-                                {journeyData.descriptionPart1}
-                                <br /><br />
-                                Under the leadership of{' '}
-                                <span className="text-[#B08B57] font-semibold">{journeyData.leaders[0]}</span>
-                                {' and '}
-                                <span className="text-[#B08B57] font-semibold">{journeyData.leaders[1]}</span>
-                                {', '}{journeyData.descriptionPart2}
+                            {/* Render Content */}
+                            <p className="text-neutral-400 leading-9 text-lg whitespace-pre-line">
+                                {journeyData.content}
                             </p>
                             
                             {/* Feature Cards */}

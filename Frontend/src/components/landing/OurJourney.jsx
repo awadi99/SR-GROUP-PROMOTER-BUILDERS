@@ -63,7 +63,7 @@ const OurJourney = memo(() => {
                                     alt="SR Group"
                                     loading="lazy"
                                     decoding="async"
-                                    className="w-full h-[650px] object-cover transition duration-1000 hover:scale-105"
+                                    className="w-full h-[650px] object-contain  transition duration-1000 hover:scale-105"
                                 />
                             </div>
                             <div className="absolute bottom-8 left-8 backdrop-blur-xl bg-black/50 border border-[#B08B57]/20 rounded-2xl px-6 py-5">

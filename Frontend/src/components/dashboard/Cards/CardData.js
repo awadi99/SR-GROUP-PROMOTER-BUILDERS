@@ -11,11 +11,11 @@ const CardData = [
         title: "Admin Users",
         Icon: ShieldCheck,
     },
-    {
-        id: 3,
-        title: "Total Images",
-        Icon: Images,
-    },
+    // {
+    //     id: 3,
+    //     title: "Total Images",
+    //     Icon: Images,
+    // },
 ];
 
 export default CardData;

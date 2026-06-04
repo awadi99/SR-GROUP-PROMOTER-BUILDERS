@@ -1,11 +1,12 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// Memoized Custom Tooltip for performance
+const fullWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 const CustomTooltip = memo(({ active, payload }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-[#141414] px-4 py-2 rounded-xl border border-[#333] shadow-lg animate-in fade-in zoom-in duration-200">
+            <div className="bg-[#141414] px-4 py-2 rounded-xl border border-[#B08B57]/30 shadow-2xl">
                 <p className="text-[10px] font-bold text-[#B08B57] uppercase tracking-[0.2em]">
                     {`${payload[0].value} Projects`}
                 </p>
@@ -16,20 +17,31 @@ const CustomTooltip = memo(({ active, payload }) => {
 });
 
 const ProjectGrowthGraph = memo(({ data = [] }) => {
+    // Logic: Merge API data with fullWeek template to ensure all days appear
+    const displayData = useMemo(() => {
+        const sourceData = data || [];
+        return fullWeek.map((day) => {
+            const foundDay = sourceData.find((item) => item.day === day);
+            return {
+                day: day,
+                count: foundDay ? foundDay.count : 0
+            };
+        });
+    }, [data]);
+
     return (
-        <div className="w-full h-[300px] bg-[#0A0A0A] p-6 rounded-2xl border border-[#1A1A1A] shadow-none flex flex-col">
+        <div className="w-full bg-[#0A0A0A] p-6 rounded-2xl border border-[#1A1A1A] shadow-none flex flex-col">
             <header className="mb-6">
                 <h2 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">
-                    Projects Created
+                    Project Performance
                 </h2>
             </header>
 
-            {/* ResponsiveContainer needs a parent with defined height */}
-            <div className="flex-1 w-full min-h-0">
+            <div className="w-full h-[300px] md:h-[400px] relative">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart 
-                        data={data} 
-                        margin={{ top: 5, right: 10, left: -20, bottom: 0 }}
+                        data={displayData} 
+                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                     >
                         <CartesianGrid 
                             vertical={false} 
@@ -40,13 +52,13 @@ const ProjectGrowthGraph = memo(({ data = [] }) => {
                             dataKey="day"
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fontSize: 10, fontWeight: 700, fill: '#555' }}
+                            tick={{ fontSize: 10, fontWeight: 600, fill: '#555' }}
                             dy={10}
                         />
                         <YAxis
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fontSize: 10, fontWeight: 700, fill: '#555' }}
+                            tick={{ fontSize: 10, fontWeight: 600, fill: '#555' }}
                         />
                         <Tooltip 
                             content={<CustomTooltip />} 
@@ -57,11 +69,8 @@ const ProjectGrowthGraph = memo(({ data = [] }) => {
                             dataKey="count"
                             stroke="#B08B57"
                             strokeWidth={3}
-                            // Smooth Animation Properties
                             isAnimationActive={true}
                             animationDuration={1500}
-                            animationEasing="ease-in-out"
-                            // Stylings
                             dot={{ r: 4, fill: '#050505', stroke: '#B08B57', strokeWidth: 2 }}
                             activeDot={{ r: 6, fill: '#B08B57', stroke: '#050505', strokeWidth: 2 }}
                         />

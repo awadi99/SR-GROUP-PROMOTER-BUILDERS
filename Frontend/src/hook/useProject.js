@@ -8,10 +8,10 @@ export const useProject = () => {
     const queryClient = useQueryClient();
     const hasToken = !!localStorage.getItem("jwt"); // Guard helper
 
-    const { 
-        data: myProjects, 
-        isPending, 
-        isFetching, 
+    const {
+        data: myProjects,
+        isPending,
+        isFetching,
         isError: isProjectsError,
         refetch
     } = useQuery({
@@ -21,7 +21,7 @@ export const useProject = () => {
             return data?.data || [];
         },
         // GUARD: Only fetch if user is logged in
-        enabled: hasToken, 
+        enabled: hasToken,
         staleTime: 1000 * 60 * 5,
         refetchOnWindowFocus: false,
         retry: false, // Prevents 401 spam on error
@@ -65,7 +65,7 @@ export const useProject = () => {
         isProjectsError,
         refetchProjects: refetch,
         createProject: mutation.mutate,
-        isCreating: mutation.isPending, 
+        isCreating: mutation.isPending,
         createError: mutation.error,
         isCreateSuccess: mutation.isSuccess,
     };
@@ -81,7 +81,7 @@ export const useProjectById = (id) => {
         queryKey: ['project', id],
         queryFn: async () => {
             const { data } = await apiClient.get(`/project/get-project/${id}`);
-            return data.data; 
+            return data.data;
         },
         // GUARD: Check ID AND Auth status
         enabled: !!id && hasToken,
@@ -143,12 +143,12 @@ export const usePublicProject = (id) => {
         queryFn: async () => {
             try {
                 const response = await apiClient.get(`/project/public/${id}`);
-                
+
 
                 if (!response.data || !response.data.success) {
                     throw new Error("API returned an unsuccessful response");
                 }
-                
+
                 // Return the 'data' object (the project)
                 return response.data.data;
             } catch (error) {
@@ -167,7 +167,7 @@ export const usePublicProjects = () => {
         queryFn: async () => {
             try {
                 const response = await apiClient.get('/project/all-public');
-                
+
                 return response.data?.data || [];
             } catch (error) {
                 console.error("Error fetching all projects:", error);
@@ -176,6 +176,24 @@ export const usePublicProjects = () => {
         },
         staleTime: 1000 * 60 * 5,
         refetchOnWindowFocus: false,
+    });
+};
+
+export const useProjectGraph = () => {
+    return useQuery({
+        queryKey: ['projectGraph'],
+        queryFn: async () => {
+            const { data } = await apiClient.get('/project/graph');
+
+            // Debug: Check what the API is actually sending
+            console.log("Graph API Response:", data);
+
+            // Adjust based on your backend response structure
+            return data?.data || [];
+        },
+        staleTime: 1000 * 60 * 5,
+        refetchOnWindowFocus: false,
+        retry: 1,
     });
 };
 

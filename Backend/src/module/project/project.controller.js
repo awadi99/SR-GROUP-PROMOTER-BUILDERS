@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
-import { 
-    createProjectService, 
-    updateProjectService, 
+import {
+    createProjectService,
+    updateProjectService,
     deleteProjectService,
     getAdminStats
 } from "./project.service.js";
@@ -12,7 +12,7 @@ import mongoose from "mongoose";
 
 const uploadImages = async (files = []) => {
     if (!Array.isArray(files) || files.length === 0) return [];
-    
+
     const uploadPromises = files.map(async (file) => {
         try {
             if (!file?.buffer) throw new Error("Invalid buffer");
@@ -23,7 +23,7 @@ const uploadImages = async (files = []) => {
             return null;
         }
     });
-    
+
     const results = await Promise.all(uploadPromises);
     return results.filter((url) => url !== null);
 };
@@ -49,12 +49,12 @@ export const createProject = asyncHandler(async (req, res) => {
 
     // FIX: Parse and Normalize features to [String] as per Mongoose schema
     if (projectData.vision?.features) {
-        let featuresArr = typeof projectData.vision.features === 'string' 
-            ? JSON.parse(projectData.vision.features) 
+        let featuresArr = typeof projectData.vision.features === 'string'
+            ? JSON.parse(projectData.vision.features)
             : projectData.vision.features;
 
         // Map objects { feature: "..." } to pure strings "..."
-        projectData.vision.features = Array.isArray(featuresArr) 
+        projectData.vision.features = Array.isArray(featuresArr)
             ? featuresArr.map(f => (typeof f === 'object' && f !== null ? f.feature : f))
             : [];
     }
@@ -72,8 +72,8 @@ export const createProject = asyncHandler(async (req, res) => {
         },
         residences: {
             ...projectData.residences,
-            units: Array.isArray(projectData.residences?.units) 
-                ? projectData.residences.units.map(unit => ({ ...unit, images: [] })) 
+            units: Array.isArray(projectData.residences?.units)
+                ? projectData.residences.units.map(unit => ({ ...unit, images: [] }))
                 : []
         }
     };
@@ -97,7 +97,7 @@ export const createProject = asyncHandler(async (req, res) => {
 // GET MY PROJECTS
 // =========================================
 export const getMyProjectsController = asyncHandler(async (req, res) => {
-    const projects = await Project.find({}).lean(); 
+    const projects = await Project.find({}).lean();
     res.status(200).json({ success: true, data: projects });
 });
 
@@ -149,10 +149,10 @@ export const updateProject = asyncHandler(async (req, res) => {
 
     // 3. Normalize Features
     if (projectData.vision?.features) {
-        let featuresArr = typeof projectData.vision.features === 'string' 
-            ? JSON.parse(projectData.vision.features) 
+        let featuresArr = typeof projectData.vision.features === 'string'
+            ? JSON.parse(projectData.vision.features)
             : projectData.vision.features;
-        projectData.vision.features = Array.isArray(featuresArr) 
+        projectData.vision.features = Array.isArray(featuresArr)
             ? featuresArr.map(f => (typeof f === 'object' && f !== null ? f.feature : f))
             : [];
     }
@@ -171,11 +171,11 @@ export const updateProject = asyncHandler(async (req, res) => {
         },
         residences: {
             ...projectData.residences,
-            units: Array.isArray(projectData.residences?.units) 
-                ? projectData.residences.units.map(unit => ({ 
-                    ...unit, 
-                    images: unit.images || [] 
-                })) 
+            units: Array.isArray(projectData.residences?.units)
+                ? projectData.residences.units.map(unit => ({
+                    ...unit,
+                    images: unit.images || []
+                }))
                 : []
         }
     };
@@ -218,9 +218,9 @@ export const deleteProject = asyncHandler(async (req, res) => {
     // Perform cleanup and deletion
     await deleteProjectService(id, userId);
 
-    res.status(200).json({ 
-        success: true, 
-        message: "Project and associated cloud assets deleted successfully." 
+    res.status(200).json({
+        success: true,
+        message: "Project and associated cloud assets deleted successfully."
     });
 });
 
@@ -234,10 +234,10 @@ export const getPublicProjectController = asyncHandler(async (req, res) => {
         throw new Error("Invalid Project ID format.");
     }
 
-  
+
     const project = await Project.findById(id)
         .lean()
-        .select('-createdBy -__v'); 
+        .select('-createdBy -__v');
 
     if (!project) {
         res.status(404);
@@ -255,7 +255,7 @@ export const getPublicProjectController = asyncHandler(async (req, res) => {
 
 
 export const getAllPublicProjectsController = asyncHandler(async (req, res) => {
-    const projects = await Project.find({}).lean(); 
+    const projects = await Project.find({}).lean();
     res.status(200).json({ success: true, data: projects });
 });
 
@@ -271,3 +271,43 @@ export const getDashboardStats = asyncHandler(async (req, res) => {
         data: stats
     });
 });
+
+export const getProjectStats = async (req, res) => {
+    try {
+        // Simply aggregate the last 7 days of creations
+        const stats = await Project.aggregate([
+            {
+                $match: {
+                    createdAt: {
+                        $gte: new Date(new Date().setDate(new Date().getDate() - 7))
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } } // Sort by date ascending
+        ]);
+
+        // Map to a simple array for the frontend
+        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const result = Array.from({ length: 7 }).map((_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - (6 - i));
+            const dateStr = d.toISOString().split('T')[0];
+
+            const found = stats.find(s => s._id === dateStr);
+            return {
+                day: days[d.getDay()],
+                count: found ? found.count : 0
+            };
+        });
+
+        res.status(200).json({ success: true, data: result });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error fetching data" });
+    }
+};

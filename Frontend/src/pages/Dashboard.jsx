@@ -1,11 +1,16 @@
 import React from 'react';
-import { Briefcase, Search, BarChart3 } from 'lucide-react';
+import { Briefcase, BarChart3 } from 'lucide-react';
 import Card from '../components/dashboard/Cards/Card';
-// import TestGraph from '../components/dashboard/Graph/TestGraph';
 import { useProject } from '../hook/useProject.js';
+import { useProjectGraph } from '../hook/useProject.js'; 
+import ProjectGrowthGraph from '../components/dashboard/Graph/TestGraph.jsx';
 
 export default function DashboardLayout() {
     const { stats, isStatsLoading } = useProject();
+    
+    // 1. Call the hook to get your data
+    const { data: graphData, isLoading: isGraphLoading } = useProjectGraph();
+
     return (
         <div className="min-h-screen w-full bg-[#050505] text-slate-300 transition-colors duration-300">
             {/* Header Section */}
@@ -22,8 +27,6 @@ export default function DashboardLayout() {
                             </p>
                         </div>
                     </div>
-
-
                 </div>
             </header>
 
@@ -32,8 +35,8 @@ export default function DashboardLayout() {
                 {/* Metrics/Stats Card Section */}
                 <section className="w-full">
                     <Card 
-                    stats={stats}
-                    isLoading={isStatsLoading}
+                        stats={stats}
+                        isLoading={isStatsLoading}
                     />
                 </section>
 
@@ -47,11 +50,16 @@ export default function DashboardLayout() {
                         <div className="h-px flex-1 bg-[#1A1A1A]" />
                     </div>
                         
-                    <div className="h-[400px] w-full rounded-2xl bg-[#0A0A0A] border border-[#1A1A1A]" >
-                    {/* <TestGraph/> */}
+                    {/* Render the graph directly to avoid double layout */}
+                    <div>
+                        {isGraphLoading ? (
+                            <div className="h-[300px] md:h-[500px] w-full rounded-2xl bg-[#0A0A0A] border border-[#1A1A1A] flex items-center justify-center text-[#333]">
+                                Loading...
+                            </div>
+                        ) : (
+                            <ProjectGrowthGraph data={graphData} />
+                        )}
                     </div>
-
-                   
                 </section>
             </main>
         </div>

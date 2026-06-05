@@ -185,10 +185,10 @@ export const useProjectGraph = () => {
         queryFn: async () => {
             const { data } = await apiClient.get('/project/graph');
 
-            // Debug: Check what the API is actually sending
+
             console.log("Graph API Response:", data);
 
-            // Adjust based on your backend response structure
+            
             return data?.data || [];
         },
         staleTime: 1000 * 60 * 5,

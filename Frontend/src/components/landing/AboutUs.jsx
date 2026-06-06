@@ -43,11 +43,11 @@ export default function AboutUS() {
 
             <div className="flex gap-10 pt-10 border-t border-[#8b6b3e]/20 mt-10">
               <div>
-                <span className="block text-4xl font-bold text-neutral-900">15+</span>
+                <span className="block text-4xl font-bold text-neutral-900">10+</span>
                 <span className="text-xs uppercase tracking-wider text-neutral-500">Projects Completed</span>
               </div>
               <div>
-                <span className="block text-4xl font-bold text-neutral-900">2026</span>
+                <span className="block text-4xl font-bold text-neutral-900">2015</span>
                 <span className="text-xs uppercase tracking-wider text-neutral-500">Year Established</span>
               </div>
             </div>

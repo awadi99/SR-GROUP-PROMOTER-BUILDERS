@@ -5,7 +5,7 @@ import { Coffee, ShieldCheck, Dumbbell, Wifi, ParkingCircle, Users } from "lucid
 const amenitiesData = [
     { icon: <ShieldCheck size={24} />, title: "24/7 Security", desc: "Advanced biometric access and constant surveillance for complete peace of mind." },
     { icon: <Dumbbell size={24} />, title: "Fitness Center", desc: "Professional-grade equipment designed to support your daily wellness routine." },
-    { icon: <Coffee size={24} />, title: "Gourmet Cafe", desc: "A refined space for social connection and artisan coffee experiences." },
+    { icon: <Coffee size={24} />, title: "CCTV Surveillance", desc: "Constant surveillance to ensure your safety and peace of mind." },
     { icon: <Wifi size={24} />, title: "Fiber Hub", desc: "High-speed connectivity built to support your work and entertainment needs." },
     { icon: <ParkingCircle size={24} />, title: "Smart Parking", desc: "Secure, automated, and EV-ready parking solutions for your convenience." },
     { icon: <Users size={24} />, title: "Meeting Lounges", desc: "Private, sophisticated suites designed for hosting and collaboration." },

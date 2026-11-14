@@ -41,7 +41,7 @@ export const specsSchema = z.object({
     towers: z.string().trim().min(1, "Number of towers is required"),
     floors: z.string().trim().min(1, "Number of floors is required"),
     architect: z.string().trim().min(3, "Architect name is required"),
-    rera: z.string().trim().min(5, "Valid RERA number required"),
+    rera: z.string().trim().optional()
 });
 
 // ======================================================

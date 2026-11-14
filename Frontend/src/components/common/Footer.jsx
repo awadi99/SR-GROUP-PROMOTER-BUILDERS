@@ -39,13 +39,13 @@ export default function Footer() {
             <p className="text-slate-400 text-sm leading-relaxed max-w-sm font-medium">
               Defining skylines with sustainable elegance. Crafting environments that stand the test of time through precision and vision.
             </p>
-            <div className="inline-flex items-center gap-3 py-3 px-5 rounded-2xl bg-white/5 border border-slate-800 group hover:border-[#B08B57]/30 transition-all transform-gpu">
+            {/* <div className="inline-flex items-center gap-3 py-3 px-5 rounded-2xl bg-white/5 border border-slate-800 group hover:border-[#B08B57]/30 transition-all transform-gpu">
               <Code2 size={18} className="text-[#B08B57]" />
               <div className="text-left">
                 <p className="text-[9px] uppercase tracking-[0.2em] text-slate-500 font-black">Developed By</p>
                 <p className="text-sm font-bold text-slate-300 group-hover:text-[#B08B57] transition-colors">Aditya Waghmare</p>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* 2. NAVIGATION */}
@@ -63,7 +63,7 @@ export default function Footer() {
           </div>
 
           {/* 3. HEADQUARTERS CONTACT */}
-          <div className="lg:col-span-3 text-left">
+          {/* <div className="lg:col-span-3 text-left">
             <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-[#B08B57] mb-8">Developer Info</h3>
             <ul className="space-y-5 text-sm font-bold text-slate-400">
               <li className="flex items-start gap-4">
@@ -81,7 +81,7 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* 4. NEWSLETTER */}
           <div className="lg:col-span-3 space-y-8 text-left">

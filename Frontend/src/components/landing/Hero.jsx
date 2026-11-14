@@ -30,7 +30,7 @@ export default function Hero() {
           >
             SR GROUP <br />
             <span className="text-[clamp(1.5rem,4vw,3.5rem)] font-medium tracking-[0.2em] block mt-4  ">
-              PROMOTER AND BUILDER
+              PROMOTER AND BUILDERS
             </span>
           </motion.h1>
 
@@ -46,7 +46,7 @@ export default function Hero() {
       {/* Footer Details */}
       <footer className="absolute bottom-20 w-full px-12 flex justify-between items-end z-20">
         <p className="text-[9px] text-white/60 uppercase tracking-[0.3em] hidden md:block">
-          Baramati — Est. 2026
+          Baramati — Est. 2015
         </p>
 
         <div className="flex items-center gap-8">
